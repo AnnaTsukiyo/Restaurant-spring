@@ -1,9 +1,7 @@
 package com.epam.zelener.restaurant.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,9 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@DynamicInsert
 public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "food_id", unique = true)
     private int id;
 
     @Column(unique = true)
@@ -24,16 +24,17 @@ public class Food {
 
     @Column(nullable = false)
     private String description;
-    @Column
+
+    @Column(nullable = false)
     private LocalDate prodDate;
-    @Column
+
+    @Column(nullable = false)
     private LocalDate expDate;
 
-    @Column
+    @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime created;
 
-    @Column
+    @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime updated;
-
 
 }

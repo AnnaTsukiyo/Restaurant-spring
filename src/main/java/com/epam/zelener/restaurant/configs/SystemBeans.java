@@ -12,10 +12,10 @@ import java.time.format.DateTimeFormatter;
 public class SystemBeans {
 
     @Bean
-    public ModelMapper modelMapper(){
-        ModelMapper mapper= new ModelMapper();
+    public ModelMapper modelMapper() {
+        ModelMapper mapper = new ModelMapper();
 
-        Provider<LocalDate> localDateProvider = new AbstractProvider<LocalDate>() {
+        Provider<LocalDate> localDateProvider = new AbstractProvider<>() {
             @Override
             public LocalDate get() {
                 return LocalDate.now();
