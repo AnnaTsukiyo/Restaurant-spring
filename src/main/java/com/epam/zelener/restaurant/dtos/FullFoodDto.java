@@ -3,6 +3,7 @@ package com.epam.zelener.restaurant.dtos;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -10,8 +11,10 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FoodRequestDto {
+public class FullFoodDto {
 
+    @NotBlank
+    private String id;
     @NotBlank
     @Size(min = 5, message = "{wrong.title}")
     private String title;
@@ -24,8 +27,4 @@ public class FoodRequestDto {
     private String prodDate;
     @NotBlank
     private String expDate;
-    @NotBlank
-    private String created;
-    @NotBlank
-    private String updated;
 }

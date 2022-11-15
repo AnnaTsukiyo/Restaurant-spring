@@ -1,31 +1,26 @@
 package com.epam.zelener.restaurant.dtos;
 
+import com.epam.zelener.restaurant.model.Ingredient;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
+import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FoodRequestDto {
-
+public class RecipeRequestDto {
+    @NotBlank
+    private int number;
     @NotBlank
     @Size(min = 5, message = "{wrong.title}")
     private String title;
     @NotBlank
-    @Size(max = 200, message = "{wrong.description}")
-    private String description;
+    private int duration;
     @NotBlank
     private String status;
     @NotBlank
-    private String prodDate;
-    @NotBlank
-    private String expDate;
-    @NotBlank
-    private String created;
-    @NotBlank
-    private String updated;
+    private List<Ingredient> ingredientList;
 }
