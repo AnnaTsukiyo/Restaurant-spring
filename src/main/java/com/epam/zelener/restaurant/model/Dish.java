@@ -19,15 +19,23 @@ public class Dish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dish_id", unique = true)
     private int id;
+
     @Column
     private int price;
+
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private int weight;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Categories category;
+
+    @Column(columnDefinition = "boolean default true")
+    private Boolean isActive;
+
     @Column
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "dish_id")

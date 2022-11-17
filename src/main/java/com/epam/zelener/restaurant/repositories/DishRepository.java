@@ -13,10 +13,14 @@ import java.util.List;
 public interface DishRepository extends JpaRepository<Dish, Integer> {
 
     @Modifying
-    @Query(value = "select d from Dish d WHERE d.title LIKE %:title%")
-    Dish findDishByTitle(String title);
+    @Query(value = "SELECT d FROM Dish d WHERE d.title LIKE %:title%")
+    Dish findDishByTitle(@Param("title") String title);
 
     @Query(value = "SELECT d FROM Dish d WHERE d.category = :category")
     List<Dish> findByCategory(Pageable pageable, @Param("category") Categories category);
+
+    @Modifying
+    @Query(value = "UPDATE dish SET is_active = false WHERE title = ?1", nativeQuery = true)
+    void deleteDishByTitle(@Param("title") String title);
 
 }

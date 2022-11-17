@@ -18,6 +18,8 @@ public class RecipeRequestDto {
     @Size(min = 5, message = "{wrong.title}")
     private String title;
     @NotBlank
+    private String isActive;
+    @NotBlank
     private int duration;
     @NotBlank
     private String status;

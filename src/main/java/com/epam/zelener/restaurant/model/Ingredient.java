@@ -2,7 +2,6 @@ package com.epam.zelener.restaurant.model;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 
@@ -22,6 +21,9 @@ public class Ingredient {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ingredient_id")
     private Food food;
+
+    @Column(columnDefinition = "boolean default true")
+    private Boolean isActive;
 
     @Column(nullable = false)
     private int quantity;

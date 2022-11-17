@@ -20,6 +20,8 @@ public class FullRecipeDto {
     @NotBlank
     private int number;
     @NotBlank
+    private String isActive;
+    @NotBlank
     @Size(min = 5, message = "{wrong.title}")
     private String title;
     @NotBlank

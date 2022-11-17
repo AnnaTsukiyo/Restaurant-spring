@@ -19,6 +19,8 @@ public class FoodRequestDto {
     @Size(max = 200, message = "{wrong.description}")
     private String description;
     @NotBlank
+    private String isActive;
+    @NotBlank
     private String status;
     @NotBlank
     private String prodDate;

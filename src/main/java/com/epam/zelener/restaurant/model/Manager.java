@@ -25,6 +25,9 @@ public class Manager {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(10) default 'MANAGER'")
     private Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20) default 'ACTIVE'")
+    private Status status;
     @Column(nullable = false)
     private String position;
     @Column(nullable = false)

@@ -11,6 +11,8 @@ public interface ManagerService {
 
     void deleteManager(String name);
 
+    ManagerRequestDto getManagerByName(String name);
+
     ManagerRequestDto getManagerById(String id);
 
     void updateManager(ManagerRequestDto requestManagerDto, String name);

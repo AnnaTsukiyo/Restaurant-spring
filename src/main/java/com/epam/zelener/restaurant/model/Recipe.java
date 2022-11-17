@@ -18,14 +18,21 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id", unique = true)
     private int id;
+
     @Column(nullable = false)
     private int number;
+
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private int duration;
+
     @Column(nullable = false)
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
     private List<Ingredient> ingredientList;
+
+    @Column(columnDefinition = "boolean default true")
+    private Boolean isActive;
 }

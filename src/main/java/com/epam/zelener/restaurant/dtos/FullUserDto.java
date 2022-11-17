@@ -30,7 +30,7 @@ public class FullUserDto {
     @Size(min = 10, max = 100, message = "{wrong.address}")
     private String address;
     @NotBlank
-    private String isActive;
+    private String status;
     @NotBlank
     private String dateOfBirth;
     @NotBlank

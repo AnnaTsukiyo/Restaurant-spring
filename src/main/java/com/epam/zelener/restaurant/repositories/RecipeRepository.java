@@ -2,10 +2,17 @@ package com.epam.zelener.restaurant.repositories;
 
 import com.epam.zelener.restaurant.model.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
-    void deleteRecipeByTitle(String title);
+    @Modifying
+    @Query(value = "DELETE FROM Recipe r WHERE r.title=:title")
+    void deleteRecipeByTitle(@Param("title") String title);
 
-    Recipe findRecipeByTitle(String title);
+    @Modifying
+    @Query(value = "SELECT r FROM Recipe r WHERE r.title LIKE %:title%")
+    Recipe findRecipeByTitle(@Param("title") String title);
 }

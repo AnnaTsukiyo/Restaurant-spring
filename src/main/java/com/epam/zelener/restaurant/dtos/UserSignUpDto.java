@@ -27,7 +27,7 @@ public class UserSignUpDto {
     @NotEmpty
     private String dateOfBirth;
     @NotBlank
-    private String isActive;
+    private String status;
     @NotEmpty
     @Email(message = "{wrong.email}")
     @EmailAlreadyExists

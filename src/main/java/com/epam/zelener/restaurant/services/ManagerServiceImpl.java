@@ -34,8 +34,13 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public void deleteManager(String name) {
         log.info("deleteManager ny name {}", name);
-        Manager manager = mapper.map(managerRepository.findManagerByName(name), Manager.class);
-        managerRepository.deleteManagerByName(name);
+        managerRepository.updateStatus(name);
+    }
+
+    @Override
+    public ManagerRequestDto getManagerByName(String name) {
+        log.info("getManagerByName {}", name);
+        return mapper.map(managerRepository.findManagerByName(name), ManagerRequestDto.class);
     }
 
     @Override

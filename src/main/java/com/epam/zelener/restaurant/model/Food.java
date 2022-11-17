@@ -25,6 +25,9 @@ public class Food {
     @Column(nullable = false)
     private String description;
 
+    @Column(columnDefinition = "boolean default true")
+    private Boolean isActive;
+
     @Column(nullable = false)
     private LocalDate prodDate;
 

@@ -21,6 +21,8 @@ public class DishRequestDto {
     @Pattern(regexp = "^\\d{1,3}", message = "{wrong.price}")
     private String price;
     @NotBlank
+    private String isActive;
+    @NotBlank
     @Pattern(regexp = "^\\d{1,4}", message = "{wrong.weight}")
     private String weight;
     @NotBlank

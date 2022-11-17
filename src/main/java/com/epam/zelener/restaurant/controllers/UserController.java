@@ -2,6 +2,7 @@ package com.epam.zelener.restaurant.controllers;
 
 import com.epam.zelener.restaurant.dtos.FullUserDto;
 import com.epam.zelener.restaurant.dtos.UserSignUpDto;
+import com.epam.zelener.restaurant.exceptions.UserNotFoundSuchElementException;
 import com.epam.zelener.restaurant.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,78 +28,89 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Create a new user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "A new user is created",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserSignUpDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Invalid data is provided",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User is not found",
-                    content = @Content)})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "A new user is created", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid data is provided. User is not created.", content = @Content)})
     @PostMapping("/create")
-    public void createUser(@RequestBody @Valid UserSignUpDto userSignUpDto) {
+    public ResponseEntity<Object> createUser(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Object User is to be created") @RequestBody @Valid UserSignUpDto userSignUpDto) {
         log.info("Request to create a new User :{}", userSignUpDto);
         userService.createUser(userSignUpDto);
+        return new ResponseEntity<>(userSignUpDto.getEmail() + " -- A new user with email{} is created", HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a user by changing status to INACTIVE")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User's status is changed to INACTIVE successfully"),
+            @ApiResponse(responseCode = "404", description = "User is not found"),
+            @ApiResponse(responseCode = "409", description = "User is already INACTIVE")})
     @DeleteMapping(value = "/delete/{email}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
-        log.info("Request to delete a User with the email :{}", email);
-        userService.deleteUser(email);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> deleteUser(@PathVariable String email) {
+        try {
+            if (!userService.getUserByEmail(email).getStatus().equals("ACTIVE")) {
+                log.warn("User with an email{} is already INACTIVE!!!", email);
+                return new ResponseEntity<>(email + " –- User with an email{} is already INACTIVE", HttpStatus.CONFLICT);
+            } else {
+                log.info("Request to delete a User with the email :{}", email);
+                userService.deleteUser(email);
+                return new ResponseEntity<>(email + " –- User's status with an email {} is changed to INACTIVE", HttpStatus.OK);
+            }
+        } catch (UserNotFoundSuchElementException e) {
+            log.error("user with a given email {} doesn't exist", email);
+            return new ResponseEntity<>(email + " -- User with such email doesn't exist", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Get all users")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found users",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserSignUpDto.class))}),
-            @ApiResponse(responseCode = "404", description = "Users are not found",
-                    content = @Content)})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found all users in database successfully"),
+            @ApiResponse(responseCode = "404", description = "No users are found. No users data!")})
     @GetMapping("/all")
-    public List<FullUserDto> findAllUsers() {
+    public ResponseEntity<Object> findAllUsers() {
         log.info("Request to find all FullDishDto :");
-        return userService.getAllUsers();
+        List<FullUserDto> userList = userService.getAllUsers();
+        if (!userList.isEmpty()) {
+            log.info("Users are found successfully");
+            return new ResponseEntity<>("Found all users in database", HttpStatus.OK);
+        } else {
+            log.error("No users are found. No users data!");
+            return new ResponseEntity<>("No users data!", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Get a user by its email")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the user",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserSignUpDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Invalid email supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User is not found",
-                    content = @Content)})
-    @GetMapping("/{email}")
-    public ResponseEntity<Object>  getUserByEmail(@Parameter(description = "email of the user to be searched")
-                                        @PathVariable String email) {
-        log.info("Request to get a UserSignUpDto by the email :{}", email);
-        return new ResponseEntity<> (userService.getUserByEmail(email),HttpStatus.OK);
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the user", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserSignUpDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid email provided", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User is not found", content = @Content)})
+    @GetMapping("/get/{email}")
+    public ResponseEntity<Object> getUserByEmail(@Parameter(description = "email of the user to be searched") @PathVariable String email) {
+        try {
+            if (userService.getUserByEmail(email).getEmail().isEmpty() || userService.getUserByEmail(email).getEmail() == null) {
+                log.warn("There is no user with a given email : {} !", email);
+                return new ResponseEntity<>(email + " –- Invalid email provided.", HttpStatus.BAD_REQUEST);
+            } else {
+                userService.getUserByEmail(email);
+                log.info("Request to get a UserSignUpDto by the email :{}", email);
+                return new ResponseEntity<>(email + " -- User with a given email {} is found successfully", HttpStatus.OK);
+            }
+        } catch (UserNotFoundSuchElementException e) {
+            return new ResponseEntity<>(email + " -- User with such email {} doesn't exist ", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Update user by its email")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The user is updated",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserSignUpDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Invalid email supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User is not found",
-                    content = @Content)})
-    @PutMapping(value = "/{email}")
-    public void updateUser(@Valid @RequestBody UserSignUpDto userSignUpDto, @PathVariable String email) {
-        log.info("Request to update a User with a email:{}", email);
-        userService.updateUser(userSignUpDto, email);
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The user is updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid email is provided"),
+            @ApiResponse(responseCode = "404", description = "User is not found")})
+    @PatchMapping(value = "/update/{email}")
+    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserSignUpDto userSignUpDto, @PathVariable String email) {
+        try {
+            userService.updateUser(userSignUpDto, email);
+            log.info("Request to update a User with a email:{}", email);
+            return new ResponseEntity<>(  userSignUpDto.getEmail() + "User with email {} is updated successfully", HttpStatus.OK);
+        } catch (UserNotFoundSuchElementException e) {
+            return new ResponseEntity<>("User with such email doesn't exist " + userSignUpDto.getEmail(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Get all users By Pages")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found users",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserSignUpDto.class))}),
-            @ApiResponse(responseCode = "404", description = "Users are not found",
-                    content = @Content)})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found users", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserSignUpDto.class))}), @ApiResponse(responseCode = "404", description = "Users are not found", content = @Content)})
     @GetMapping("/all/{page}")
     public ResponseEntity<Object> getAllByPages(@PathVariable String page) {
         log.info("getting all users");
