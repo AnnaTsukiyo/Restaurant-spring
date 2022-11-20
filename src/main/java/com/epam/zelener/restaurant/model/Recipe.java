@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id", unique = true)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private int number;
@@ -28,7 +29,6 @@ public class Recipe {
     @Column(nullable = false)
     private int duration;
 
-    @Column(nullable = false)
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
     private List<Ingredient> ingredientList;

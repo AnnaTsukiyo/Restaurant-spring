@@ -25,6 +25,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
 
     @Override
+    @Transactional
     public void createRecipe(RecipeRequestDto recipeRequestDto) {
         Recipe recipe = mapper.map(recipeRequestDto, Recipe.class);
         log.info("New recipe is created with a title {}", recipeRequestDto.getTitle());
@@ -32,6 +33,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
     public void deleteRecipe(String title) {
         log.info("deleteRecipe by title {}", title);
         Recipe recipe = mapper.map(recipeRepository.findRecipeByTitle(title), Recipe.class);
@@ -39,12 +41,14 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
     public RecipeRequestDto getRecipeByTitle(String title) {
         log.info("getRecipeByTitle {}", title);
         return mapper.map(recipeRepository.findRecipeByTitle(title), RecipeRequestDto.class);
     }
 
     @Override
+    @Transactional
     public void updateRecipe(RecipeRequestDto recipeRequestDto, String title) {
         Recipe recipe = mapper.map(recipeRequestDto, Recipe.class);
         log.info("updateRecipe by title {}", title);
@@ -55,7 +59,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public List<FullRecipeDto> getAllRecipe() {
-        log.info("getAllRecipe ");
+        log.info("getAllRecipe method");
         return recipeRepository.findAll().stream()
                 .map(e -> mapper.map(e, FullRecipeDto.class))
                 .collect(Collectors.toList());

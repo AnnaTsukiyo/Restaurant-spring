@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 
 @Entity
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

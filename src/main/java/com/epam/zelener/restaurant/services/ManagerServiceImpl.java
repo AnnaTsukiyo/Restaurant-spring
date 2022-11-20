@@ -25,6 +25,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final ManagerRepository managerRepository;
 
     @Override
+    @Transactional
     public void createManager(ManagerRequestDto managerRequestDto) {
         Manager manager = mapper.map(managerRequestDto, Manager.class);
         log.info("New manager is created with a name {}", managerRequestDto.getName());
@@ -32,12 +33,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public void deleteManager(String name) {
         log.info("deleteManager ny name {}", name);
         managerRepository.updateStatus(name);
     }
 
     @Override
+    @Transactional
     public ManagerRequestDto getManagerByName(String name) {
         log.info("getManagerByName {}", name);
         return mapper.map(managerRepository.findManagerByName(name), ManagerRequestDto.class);
@@ -51,6 +54,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public void updateManager(ManagerRequestDto managerRequestDto, String name) {
         Manager manager = mapper.map(managerRequestDto, Manager.class);
         log.info("updateManager by name {}", name);
@@ -60,7 +64,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     @Transactional
     public List<FullManagerDto> getAllManager() {
-        log.info("getAllManager ");
+        log.info("getAllManager method ");
         return managerRepository.findAll().stream()
                 .map(e -> mapper.map(e, FullManagerDto.class))
                 .collect(Collectors.toList());

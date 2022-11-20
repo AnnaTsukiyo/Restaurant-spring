@@ -89,7 +89,7 @@ public class ManagerController {
             } else {
                 managerService.getManagerById(id);
                 log.info("Request to get a ManagerRequestDto by the id :{}", id);
-                return new ResponseEntity<>(id + " -- Manager with a given email {} is found successfully", HttpStatus.OK);
+                return new ResponseEntity<>(id + " -- Manager with a given id {} is found successfully", HttpStatus.OK);
             }
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(id + " -- Manager with such id {} doesn't exist ", HttpStatus.NOT_FOUND);

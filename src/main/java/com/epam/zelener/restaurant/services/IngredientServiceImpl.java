@@ -54,7 +54,7 @@ Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id),I
     @Override
     @Transactional
     public List<IngredientRequestDto> getAllIngredients() {
-        log.info("getAllIngredients ");
+        log.info("getAllIngredients method");
         return ingredientRepository.findAll().stream()
                 .map(e -> mapper.map(e, IngredientRequestDto.class))
                 .collect(Collectors.toList());

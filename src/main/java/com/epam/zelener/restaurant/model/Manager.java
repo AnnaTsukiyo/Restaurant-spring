@@ -4,9 +4,12 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -15,13 +18,14 @@ public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "manager_id")
-    private int id;
+    private Long id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private int age;
-    @Column(nullable = false)
-    private String userPhoneNumber;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "manager_id")
+    private List<User> userData;
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(10) default 'MANAGER'")
     private Role role;
@@ -33,10 +37,9 @@ public class Manager {
     @Column(nullable = false)
     private double salary;
 
-    public Manager(String name, int age, String userPhoneNumber, Role role, String position, double salary) {
+    public Manager(String name, int age, Role role, String position, double salary) {
         this.name = name;
         this.age = age;
-        this.userPhoneNumber = userPhoneNumber;
         this.role = role;
         this.position = position;
         this.salary = salary;

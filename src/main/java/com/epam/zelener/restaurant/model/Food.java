@@ -8,16 +8,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @DynamicInsert
 public class Food {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_id", unique = true)
-    private int id;
+    private Long id;
 
     @Column(unique = true)
     private String title;

@@ -25,6 +25,7 @@ public class FoodServiceImpl implements FoodService {
     private final FoodRepository foodRepository;
 
     @Override
+    @Transactional
     public void createFood(FoodRequestDto foodRequestDto) {
         Food food = mapper.map(foodRequestDto, Food.class);
         log.info("New food is created with a title {}", foodRequestDto.getTitle());
@@ -32,6 +33,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @Transactional
     public void deleteFood(String title) {
         log.info("deleteFood with title {}", title);
         Food food = mapper.map(foodRepository.findFoodByTitle(title), Food.class);
@@ -46,6 +48,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @Transactional
     public void updateFood(FoodRequestDto foodRequestDto, String title) {
         Food food = mapper.map(foodRequestDto, Food.class);
         log.info("updateFood by title {}", title);
@@ -55,7 +58,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Transactional
     public List<FullFoodDto> getAllFood() {
-        log.info("getAllFood ");
+        log.info("getAllFood method");
         return foodRepository.findAll().stream()
                 .map(e -> mapper.map(e, FullFoodDto.class))
                 .collect(Collectors.toList());

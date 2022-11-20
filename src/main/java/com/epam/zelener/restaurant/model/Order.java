@@ -8,8 +8,10 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Table(name = "orders")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,20 +21,30 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", unique = true)
-    private long orderId;
-    @Column(name = "user_id")
-    private Long userId;
-    @Column(name = "dish_id")
-    private Long dishId;
+    @Column(name = "single_order_id")
+    private Long id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User userId;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_order_id")
+    private List<Dish> dishList;
     @Column
     private Double totalPrice;
-    @Column(columnDefinition = "timestamp default now()")
-    private LocalDateTime created;
+
     @Column
     private String methodOfReceiving;
+
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(10) default 'NEW'")
+    @Column(columnDefinition = "varchar(30) default 'NEW'")
     private OrderStatus status;
+
+    @Column(columnDefinition = "timestamp default now()")
+    private LocalDateTime created;
+
+    @Column(columnDefinition = "timestamp default now()")
+    private LocalDateTime updated;
 
 }

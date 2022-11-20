@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,13 +30,15 @@ public class DishServiceImpl implements DishService {
     private final DishRepository dishRepository;
 
     @Override
+    @Transactional
     public void createDish(DishRequestDto dishRequestDto) {
-        log.info("createDish with a title  {}", dishRequestDto.getTitle());
+        log.info("createDish with a title {}", dishRequestDto.getTitle());
         Dish dish = mapper.map(dishRequestDto, Dish.class);
         dishRepository.save(dish);
     }
 
     @Override
+    @Transactional
     public void deleteDish(String title) {
         log.info("deleteDish with title {}", title);
         Dish dish = mapper.map(dishRepository.findDishByTitle(title), Dish.class);
@@ -45,11 +48,12 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public DishRequestDto getDishByTitle(String title) {
-        log.info("getByTitle  {}", title);
+        log.info("getByTitle {}", title);
         return mapper.map(dishRepository.findDishByTitle(title), DishRequestDto.class);
     }
 
     @Override
+    @Transactional
     public void updateDish(DishRequestDto dishRequestDto, String title) {
         Dish dish = mapper.map(dishRequestDto, Dish.class);
         log.info("updateDish with title {}", title);
@@ -59,13 +63,14 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public List<FullDishDto> getAllDish() {
-        log.info("getAllDish");
+        log.info("getAllDish method");
         return dishRepository.findAll().stream()
                 .map(e -> mapper.map(e, FullDishDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public List<FullDishDto> sortingBy(String sortingOption, String page) {
         Pageable pagesWithThreeElements = PageRequest.of(Integer.parseInt(page), 3, Sort.by(sortingOption));
         log.info("Start method getAllDish() in dish service");
@@ -76,6 +81,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Transactional
     public List<FullDishDto> getByCategory(String category, String page) {
         Pageable pagesWithThreeElements = PageRequest.of(Integer.parseInt(page), 3);
         log.info("Start method getByCategory() in dish service {}", category);

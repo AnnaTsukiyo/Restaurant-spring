@@ -7,18 +7,18 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @DynamicInsert
-@Builder
 public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dish_id", unique = true)
-    private int id;
+    private Long id;
 
     @Column
     private int price;
@@ -36,7 +36,6 @@ public class Dish {
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
 
-    @Column
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "dish_id")
     private List<Ingredient> ingredientList;
