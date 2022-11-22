@@ -11,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,7 +29,6 @@ public class DishServiceImpl implements DishService {
     private final DishRepository dishRepository;
 
     @Override
-    @Transactional
     public void createDish(DishRequestDto dishRequestDto) {
         log.info("createDish with a title {}", dishRequestDto.getTitle());
         Dish dish = mapper.map(dishRequestDto, Dish.class);
@@ -52,9 +50,17 @@ public class DishServiceImpl implements DishService {
         return mapper.map(dishRepository.findDishByTitle(title), DishRequestDto.class);
     }
 
+
     @Override
     @Transactional
-    public void updateDish(DishRequestDto dishRequestDto, String title) {
+    public void updateDishTitle(long id, String title) {
+        log.info("updateDish by id with the  title {}", title);
+        dishRepository.updateTitle(id, title);
+    }
+
+    @Override
+    @Transactional
+    public void updateDish(FullDishDto dishRequestDto, String title) {
         Dish dish = mapper.map(dishRequestDto, Dish.class);
         log.info("updateDish with title {}", title);
         dishRepository.save(dish);

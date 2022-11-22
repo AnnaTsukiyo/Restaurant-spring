@@ -63,8 +63,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UserSignUpDto userSignUpDto, String email) {
         log.info("updateUser by email{}", email);
-        User user = mapper.map(userRepository.findUserByEmail(email), User.class);
-        userRepository.updateStatus(email);
+        User user = mapper.map(userSignUpDto, User.class);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateUserAddress(String phone, String address) {
+        log.info("updateUserAddress by phone{}", phone);
+        userRepository.updateAddress(phone, address);
     }
 
     @Override

@@ -51,9 +51,15 @@ public class RecipeServiceImpl implements RecipeService {
     @Transactional
     public void updateRecipe(RecipeRequestDto recipeRequestDto, String title) {
         Recipe recipe = mapper.map(recipeRequestDto, Recipe.class);
-        log.info("updateRecipe by title {}", title);
+        log.info("updateRecipe method");
         recipeRepository.save(recipe);
+    }
 
+    @Override
+    @Transactional
+    public void updateRecipeTitle(Long id, String title) {
+        log.info("updateRecipe title {}", title);
+        recipeRepository.updateTitle(id, title);
     }
 
     @Override

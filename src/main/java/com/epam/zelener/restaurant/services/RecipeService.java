@@ -2,6 +2,7 @@ package com.epam.zelener.restaurant.services;
 
 import com.epam.zelener.restaurant.dtos.FullRecipeDto;
 import com.epam.zelener.restaurant.dtos.RecipeRequestDto;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,8 +20,12 @@ public interface RecipeService {
     @Transactional
     RecipeRequestDto getRecipeByTitle(String title);
 
+    @Modifying
     @Transactional
     void updateRecipe(RecipeRequestDto recipeRequestDto, String title);
+
+    @Transactional
+    void updateRecipeTitle(Long id, String title);
 
     @Transactional
     List<FullRecipeDto> getAllRecipe();

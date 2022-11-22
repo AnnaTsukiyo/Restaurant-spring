@@ -56,9 +56,15 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     @Transactional
     public void updateManager(ManagerRequestDto managerRequestDto, String name) {
-        Manager manager = mapper.map(managerRequestDto, Manager.class);
         log.info("updateManager by name {}", name);
-        managerRepository.save(manager);
+        Manager manager = mapper.map(managerRequestDto, Manager.class);
+         managerRepository.save(manager);
+    }
+
+    @Override
+    public void updateManagerName(long id, String name) {
+        log.info("updateManagerName ", name);
+        managerRepository.updateName(id, name);
     }
 
     @Override

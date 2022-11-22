@@ -48,11 +48,18 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
     public void updateFood(FoodRequestDto foodRequestDto, String title) {
         Food food = mapper.map(foodRequestDto, Food.class);
         log.info("updateFood by title {}", title);
         foodRepository.save(food);
+    }
+
+
+    @Override
+    @Transactional
+    public void updateFoodTitle(long id, String title) {
+        log.info("updateFoodTitle with the title {}", title);
+        foodRepository.updateTitle(id, title);
     }
 
     @Override

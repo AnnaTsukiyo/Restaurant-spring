@@ -82,9 +82,9 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order is not found")})
 
     @PatchMapping(value = "/{name}")
-    public ResponseEntity<Object> updateManager(@Valid @RequestBody OrderDto orderDto, @PathVariable String id) {
+    public ResponseEntity<Object> updateOrder(@Valid @RequestBody OrderDto orderDto, @PathVariable String id) {
         try {
-            orderService.updateOrderStatus(orderDto, id);
+            orderService.updateOrder(orderDto, Long.parseLong(id));
             log.info("Request to update a Order Status with order id:{}", id);
             return new ResponseEntity<>(orderDto.getOrderId() + "Order status with order id {} is updated successfully", HttpStatus.OK);
         } catch (UserNotFoundSuchElementException e) {

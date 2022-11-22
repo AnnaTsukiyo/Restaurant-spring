@@ -14,7 +14,12 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
     Food findFoodByTitle(@Param("title")String title);
 
     @Modifying
+    @Query("UPDATE Food f set f.title = :title where f.id = ?1")
+    void updateTitle(@Param(value = "id") long id, @Param(value = "title") String title);
+    
+    @Modifying
     @Query(value = "UPDATE food SET is_active = false WHERE title = ?1", nativeQuery = true)
     void deleteFoodByTitle(@Param("title") String title);
 
+    Food findById(long id);
 }

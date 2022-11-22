@@ -14,7 +14,12 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
     Ingredient findIngredientById(@Param("id") String id);
 
     @Modifying
-    @Query(value = "UPDATE ingredient SET is_active = false WHERE ingredient_id = ?1", nativeQuery = true)
-    void deleteIngredientById(@Param("id") String id);
+    @Query(value = "UPDATE Ingredient i SET is_active = false WHERE ingredient_id = ?1", nativeQuery = true)
+    void deleteIngredientById(@Param("id") long id);
 
+    @Modifying
+    @Query("UPDATE Ingredient i SET i.quantity =:quantity WHERE i.id = ?1")
+    void updateQuantity(@Param(value = "id") long id, @Param(value = "quantity") int quantity);
+
+    Ingredient findById(long id);
 }

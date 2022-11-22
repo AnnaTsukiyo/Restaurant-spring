@@ -1,6 +1,7 @@
 package com.epam.zelener.restaurant.services;
 
 import com.epam.zelener.restaurant.dtos.IngredientRequestDto;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,10 @@ public interface IngredientService {
 
     @Transactional
     void updateIngredient(IngredientRequestDto ingredientRequestDto, String id);
+
+    @Modifying
+    @Transactional
+    void updateIngredientQuantity(long id, int quantity);
 
     @Transactional
     List<IngredientRequestDto> getAllIngredients();

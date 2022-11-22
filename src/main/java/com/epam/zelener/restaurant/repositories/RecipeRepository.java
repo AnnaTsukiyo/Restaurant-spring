@@ -14,7 +14,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @Query(value = "DELETE FROM Recipe r WHERE r.title=:title")
     void deleteRecipeByTitle(@Param("title") String title);
 
-    @Modifying
     @Query(value = "SELECT r FROM Recipe r WHERE r.title LIKE %:title%")
     Recipe findRecipeByTitle(@Param("title") String title);
+
+    @Modifying
+    @Query("UPDATE Recipe r set r.title = :title where r.id = ?1")
+    void updateTitle(@Param(value = "id") Long id, @Param(value = "title") String title);
 }

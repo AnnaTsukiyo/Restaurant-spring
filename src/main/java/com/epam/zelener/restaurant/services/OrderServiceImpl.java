@@ -54,13 +54,20 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.getByUser(user);
     }
 
+    @Transactional
     @Override
-    public void updateOrderStatus(OrderDto orderDto, String id) {
+    public void updateOrder(OrderDto orderDto, long id) {
         Order order = mapper.map(orderDto, Order.class);
-        log.info("updateOrderStatus by id {}", id);
+        log.info("updateOrder method");
         orderRepository.save(order);
     }
 
+    @Transactional
+    @Override
+    public void updateOrderStatus(Long id, String status) {
+        log.info("updateOrderStatus by id {}", id);
+        orderRepository.updateOrderStatus(id, status);
+    }
 
     @Transactional
     @Override

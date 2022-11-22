@@ -109,7 +109,7 @@ public class DishController {
             @ApiResponse(responseCode = "400", description = "Invalid title provided"),
             @ApiResponse(responseCode = "404", description = "Dish is not found")})
     @PatchMapping(value = "/{title}")
-    public ResponseEntity<Object> updateDish(@Valid @RequestBody DishRequestDto dishRequestDto, @PathVariable String title) {
+    public ResponseEntity<Object> updateDish(@Valid @RequestBody FullDishDto dishRequestDto, @PathVariable String title) {
         try {
             dishService.updateDish(dishRequestDto, title);
             log.info("Request to update Dish with a title:{}", title);

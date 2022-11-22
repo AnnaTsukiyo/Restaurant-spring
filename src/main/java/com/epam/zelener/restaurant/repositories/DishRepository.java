@@ -12,14 +12,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DishRepository extends JpaRepository<Dish, Integer> {
+public interface DishRepository extends JpaRepository<Dish, Long> {
 
-    @Modifying
+    Dish findById(long id);
+
     @Query(value = "SELECT d FROM Dish d WHERE d.title LIKE %:title%")
     Dish findDishByTitle(@Param("title") String title);
 
     @Query(value = "SELECT d FROM Dish d WHERE d.category = :category")
     List<Dish> findByCategory(Pageable pageable, @Param("category") Categories category);
+
+    @Modifying
+    @Query("UPDATE Dish d set d.title = :title where d.id = ?1")
+    void updateTitle(@Param(value = "id") Long id, @Param(value = "title") String title);
 
     @Modifying
     @Query(value = "UPDATE dish SET is_active = false WHERE title = ?1", nativeQuery = true)

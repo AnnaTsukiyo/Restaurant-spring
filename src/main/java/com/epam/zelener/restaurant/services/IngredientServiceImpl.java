@@ -33,22 +33,28 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public void deleteIngredient(String id) {
         log.info("deleteIngredient with id {}", id);
-Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id),Ingredient.class);
+        Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id), Ingredient.class);
         ingredientRepository.save(ingredient);
     }
 
     @Override
     @Transactional
     public IngredientRequestDto getIngredientById(String id) {
-        log.info("getIngredientById {}",id);
+        log.info("getIngredientById {}", id);
         return mapper.map(ingredientRepository.findIngredientById(id), IngredientRequestDto.class);
     }
 
     @Override
     public void updateIngredient(IngredientRequestDto ingredientRequestDto, String id) {
-        Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id),Ingredient.class);
-        log.info("updateIngredient by id {}",id);
+        Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id), Ingredient.class);
+        log.info("updateIngredient by id {}", id);
         ingredientRepository.save(ingredient);
+    }
+
+    @Override
+    public void updateIngredientQuantity(long id, int quantity) {
+        log.info("updateIngredientQuantity with the quantity {}", quantity);
+        ingredientRepository.updateQuantity(id,quantity);
     }
 
     @Override

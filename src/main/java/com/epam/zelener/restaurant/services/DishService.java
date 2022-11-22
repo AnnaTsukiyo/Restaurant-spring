@@ -14,6 +14,7 @@ public interface DishService {
     @Transactional
     void createDish(DishRequestDto dishRequestDto);
 
+    @Modifying
     @Transactional
     void deleteDish(String title);
 
@@ -22,7 +23,11 @@ public interface DishService {
 
     @Modifying
     @Transactional
-    void updateDish(DishRequestDto dishRequestDto, String title);
+    void updateDishTitle(long id, String title);
+
+    @Modifying
+    @Transactional
+    void updateDish(FullDishDto dishDto, String title);
 
     @Transactional
     List<FullDishDto> getAllDish();
