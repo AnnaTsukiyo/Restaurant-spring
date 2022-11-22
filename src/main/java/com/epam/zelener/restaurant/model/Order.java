@@ -4,38 +4,40 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table
+@Table(name = "orders")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @DynamicInsert
-public class Food {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "food_id", unique = true)
+    @Column(name = "single_order_id")
     private Long id;
 
-    @Column(unique = true)
-    private String title;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User userId;
 
-    @Column(nullable = false)
-    private String description;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_order_id")
+    private List<Dish> dishList;
+    @Column
+    private Double totalPrice;
 
-    @Column(columnDefinition = "boolean default true")
-    private Boolean isActive;
+    @Column
+    private String methodOfReceiving;
 
-    @Column(nullable = false)
-    private LocalDate prodDate;
-
-    @Column(nullable = false)
-    private LocalDate expDate;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(30) default 'NEW'")
+    private OrderStatus status;
 
     @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime created;
