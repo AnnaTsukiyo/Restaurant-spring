@@ -1,5 +1,6 @@
 package com.epam.zelener.restaurant.services;
 
+import com.epam.zelener.restaurant.dtos.FoodCreateDto;
 import com.epam.zelener.restaurant.dtos.FoodRequestDto;
 import com.epam.zelener.restaurant.dtos.FullFoodDto;
 import com.epam.zelener.restaurant.model.Food;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -20,46 +23,74 @@ import java.util.stream.Collectors;
 public class FoodServiceImpl implements FoodService {
 
     @Resource
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     private final FoodRepository foodRepository;
 
     @Override
     @Transactional
-    public void createFood(FoodRequestDto foodRequestDto) {
-        Food food = mapper.map(foodRequestDto, Food.class);
+    public Optional<FullFoodDto> createFood(FoodCreateDto foodRequestDto) {
         log.info("New food is created with a title {}", foodRequestDto.getTitle());
-        foodRepository.save(food);
+        foodRepository.save(mapper.map(foodRequestDto, Food.class));
+        return getFoodByTitle(foodRequestDto.getTitle());
     }
 
     @Override
     @Transactional
-    public void deleteFood(String title) {
-        log.info("deleteFood with title {}", title);
-        Food food = mapper.map(foodRepository.findFoodByTitle(title), Food.class);
-        foodRepository.save(food);
+    public FullFoodDto deactivateFood(String title) {
+
+        log.info("deactivateFood with title {}", title);
+        FullFoodDto foodDto = getFoodByTitle(title).orElseThrow();
+        Optional<Food> food = foodRepository.findById(Integer.valueOf(foodDto.getId()));
+        foodRepository.deactivateFoodByTitle(title);
+        food.orElseThrow().setIsActive(false);
+        Food deactivatedFood = foodRepository.save(food.orElseThrow());
+        log.info("Food {} is deactivated", food);
+        return mapper.map(deactivatedFood, FullFoodDto.class);
     }
 
     @Override
     @Transactional
-    public FoodRequestDto getFoodByTitle(String title) {
+    public Optional<FullFoodDto> getFoodByTitle(String title) {
         log.info("getFoodByTitle {}", title);
-        return mapper.map(foodRepository.findFoodByTitle(title), FoodRequestDto.class);
+        try {
+            return Optional.of(mapper.map(foodRepository.findFoodByTitle(title), FullFoodDto.class));
+        } catch (IllegalArgumentException ex) {
+            log.info("Food with title {} wasn't found! ", title);
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
-    public void updateFood(FoodRequestDto foodRequestDto, String title) {
-        Food food = mapper.map(foodRequestDto, Food.class);
+    public FoodRequestDto updateFood(FoodRequestDto foodRequestDto, String title) {
         log.info("updateFood by title {}", title);
-        foodRepository.save(food);
-    }
+        getFoodByTitle(title).orElseThrow();
+        Food food = foodRepository.findFoodByTitle(title);
 
+        if (food.getTitle().equals(title)) {
+            if (foodRequestDto.getDescription() != null) {
+                food.setDescription((foodRequestDto.getDescription()));
+            }
+
+            Food updatedFood = foodRepository.save(food);
+            return mapper.map(updatedFood, FoodRequestDto.class);
+        }
+        log.info("Food is updated successfully");
+        return null;
+    }
 
     @Override
     @Transactional
-    public void updateFoodTitle(long id, String title) {
-        log.info("updateFoodTitle with the title {}", title);
+    public FullFoodDto updateFoodTitle(String id, String title) {
+        log.info("updateFoodTitle by id with the title {}", title);
+        getFoodById(id).orElseThrow();
+
+        Food food = foodRepository.findFoodById(id);
         foodRepository.updateTitle(id, title);
+        Food updatedFood = foodRepository.save(food);
+        log.info("Food is updated successfully");
+        return mapper.map(updatedFood, FullFoodDto.class);
+
     }
 
     @Override
@@ -69,5 +100,23 @@ public class FoodServiceImpl implements FoodService {
         return foodRepository.findAll().stream()
                 .map(e -> mapper.map(e, FullFoodDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Optional<FullFoodDto> getFoodById(String id) {
+        log.info("getFoodById {}", id);
+        try {
+            return Optional.of(mapper.map(foodRepository.findFoodById(id), FullFoodDto.class));
+        } catch (IllegalArgumentException ex) {
+            log.info("Food with id {} wasn't found! ", id);
+            throw new NoSuchElementException();
+        }
+    }
+
+    @Override
+    public boolean isStatusActive(String title) {
+        log.info("Checking if food with such title {} is active", title);
+        return Boolean.parseBoolean(getFoodByTitle(title).orElseThrow().getIsActive());
     }
 }

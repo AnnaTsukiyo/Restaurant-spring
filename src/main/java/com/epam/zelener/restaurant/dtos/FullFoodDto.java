@@ -3,7 +3,6 @@ package com.epam.zelener.restaurant.dtos;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -23,6 +22,8 @@ public class FullFoodDto {
     private String description;
     @NotBlank
     private String status;
+    @NotBlank
+    private String isActive;
     @NotBlank
     private String prodDate;
     @NotBlank

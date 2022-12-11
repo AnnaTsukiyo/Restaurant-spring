@@ -10,19 +10,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @Query(value = "SELECT u FROM User u WHERE u.email = ?1")
+    @Query(value = "select u from User u where u.email = ?1")
     User findUserByEmail(@Param(value = "email") String email);
 
-    @Query(value = "SELECT u FROM User u WHERE u.phoneNumber = ?1")
+    @Query(value = "select u from User u where u.phoneNumber = :phoneNumber")
     User findUserByPhoneNumber(@Param(value = "phoneNumber") String phoneNumber);
 
-    @Modifying
-    @Query(value = "UPDATE user u SET u.status = 'INACTIVE' WHERE u.email =?1", nativeQuery = true)
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update User u set u.status = 'INACTIVE' where u.email = :email")
     void updateStatus(@Param(value = "email") String email);
 
-    @Modifying
-    @Query(value = "UPDATE user u SET u.address = :address WHERE u.phone_number=:phoneNumber", nativeQuery = true)
-    void updateAddress(@Param(value = "id") String phoneNumber, @Param(value = "address") String address);
-
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update User u set u.address = :address where u.email = :email")
+    void updateAddress(@Param(value = "email") String email, @Param(value = "address") String address);
 
 }

@@ -10,16 +10,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, Integer> {
 
-    @Query(value = "SELECT i FROM Ingredient i WHERE i.id = ?1")
+    @Query(value = "select i from Ingredient i where i.id = :id")
     Ingredient findIngredientById(@Param("id") String id);
 
     @Modifying
-    @Query(value = "UPDATE Ingredient i SET is_active = false WHERE ingredient_id = ?1", nativeQuery = true)
-    void deleteIngredientById(@Param("id") long id);
+    @Query(value = "update Ingredient i set i.isActive ='false' WHERE i.id = :id")
+    void deactivateIngredientById(@Param("id") String id);
 
     @Modifying
-    @Query("UPDATE Ingredient i SET i.quantity =:quantity WHERE i.id = ?1")
-    void updateQuantity(@Param(value = "id") long id, @Param(value = "quantity") int quantity);
+    @Query("update Ingredient i set i.quantity = :quantity WHERE i.id = :id")
+    void updateQuantity(@Param(value = "id") String id, @Param(value = "quantity") String quantity);
 
-    Ingredient findById(long id);
 }

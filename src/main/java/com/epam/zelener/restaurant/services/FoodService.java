@@ -1,5 +1,6 @@
 package com.epam.zelener.restaurant.services;
 
+import com.epam.zelener.restaurant.dtos.FoodCreateDto;
 import com.epam.zelener.restaurant.dtos.FoodRequestDto;
 import com.epam.zelener.restaurant.dtos.FullFoodDto;
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,30 +8,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface FoodService {
 
     @Transactional
-    void createFood(FoodRequestDto foodRequestDto);
+    Optional<FullFoodDto> createFood(FoodCreateDto foodRequestDto);
 
     @Modifying
     @Transactional
-    void deleteFood(String title);
+    FullFoodDto deactivateFood(String title);
 
     @Transactional
-    FoodRequestDto getFoodByTitle(String title);
-
-    @Modifying
-    @Transactional
-    void updateFood(FoodRequestDto foodRequestDto, String title);
+    Optional<FullFoodDto> getFoodByTitle(String title);
 
     @Modifying
     @Transactional
-    void updateFoodTitle(long id, String title);
+    FoodRequestDto updateFood(FoodRequestDto foodRequestDto, String title);
+
+    @Modifying
+    @Transactional
+    FullFoodDto updateFoodTitle(String id, String title);
 
     @Transactional
     List<FullFoodDto> getAllFood();
 
+    Optional<FullFoodDto> getFoodById(String id);
+
+    boolean isStatusActive(String title);
 }
 

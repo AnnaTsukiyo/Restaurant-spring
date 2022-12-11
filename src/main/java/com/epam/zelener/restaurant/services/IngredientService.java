@@ -1,32 +1,37 @@
 package com.epam.zelener.restaurant.services;
 
+import com.epam.zelener.restaurant.dtos.FullIngredientDto;
+import com.epam.zelener.restaurant.dtos.IngredientCreateDto;
 import com.epam.zelener.restaurant.dtos.IngredientRequestDto;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface IngredientService {
 
     @Transactional
-    void createIngredient(IngredientRequestDto ingredientRequestDto);
+    Optional<FullIngredientDto> createIngredient(IngredientCreateDto ingredientRequestDto);
 
     @Transactional
-    void deleteIngredient(String id);
+    FullIngredientDto deactivateIngredient(String id);
 
     @Transactional
-    IngredientRequestDto getIngredientById(String id);
+    Optional<FullIngredientDto> getIngredientById(String id);
 
     @Transactional
-    void updateIngredient(IngredientRequestDto ingredientRequestDto, String id);
+    IngredientRequestDto updateIngredient(IngredientRequestDto ingredientRequestDto, String id);
 
     @Modifying
     @Transactional
-    void updateIngredientQuantity(long id, int quantity);
+    IngredientRequestDto updateIngredientQuantity(String id, String quantity);
 
     @Transactional
-    List<IngredientRequestDto> getAllIngredients();
+    List<FullIngredientDto> getAllIngredients();
+
+    boolean isStatusActive(String id);
 
 }

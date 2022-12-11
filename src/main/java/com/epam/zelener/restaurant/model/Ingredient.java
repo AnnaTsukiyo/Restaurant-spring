@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table
@@ -20,9 +21,9 @@ public class Ingredient {
     @Column(name = "ingredient_id", unique = true)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ingredient_id")
-    private Food food;
+    private List<Food> foodList;
 
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;

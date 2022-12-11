@@ -1,7 +1,10 @@
 package com.epam.zelener.restaurant.services;
 
 import com.epam.zelener.restaurant.dtos.FullUserDto;
-import com.epam.zelener.restaurant.dtos.UserSignUpDto;
+import com.epam.zelener.restaurant.dtos.UserCreateDto;
+import com.epam.zelener.restaurant.dtos.UserUpdateDto;
+import com.epam.zelener.restaurant.exceptions.UserNotFoundSuchElementException;
+import com.epam.zelener.restaurant.model.Status;
 import com.epam.zelener.restaurant.model.User;
 import com.epam.zelener.restaurant.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -29,48 +32,78 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(UserSignUpDto userSignUpDto) {
-        log.info("createUser with phone number {}", userSignUpDto.getPhoneNumber());
-        userRepository.save(mapper.map(userSignUpDto, User.class));
+    public Optional<FullUserDto> createUser(UserCreateDto userCreateDto) {
+        log.info("createUser with email {}", userCreateDto.getEmail());
+        userRepository.save(mapper.map(userCreateDto, User.class));
+        log.info("User was created successfully");
+        return getUserByEmail(userCreateDto.getEmail());
     }
 
     @Transactional
     @Override
-    public void deleteUser(String email) {
-        log.info("deleteUser with email {}", email);
+    public FullUserDto deactivateUser(String email) {
+        log.info("deactivateUser with email {}", email);
+        FullUserDto userDto = getUserByEmail(email).orElseThrow();
+        Optional<User> user = userRepository.findById(Integer.valueOf(userDto.getId()));
         userRepository.updateStatus(email);
+        user.orElseThrow().setStatus(Status.valueOf("INACTIVE"));
+        User deactivatedUser = userRepository.save(user.orElseThrow());
+        log.info("User {} is deactivated", email);
+        return mapper.map(deactivatedUser, FullUserDto.class);
     }
 
     @Transactional
     @Override
-    public UserSignUpDto getUserByEmail(String email) {
-        log.info("getUserByEmail with email {}", email);
+    public Optional<FullUserDto> getUserByEmail(String email) {
+        log.info("getUserByEmail with email: {}", email);
         try {
-            return mapper.map(userRepository.findUserByEmail(email), UserSignUpDto.class);
+            return Optional.of(mapper.map(userRepository.findUserByEmail(email), FullUserDto.class));
         } catch (IllegalArgumentException ex) {
-            throw new NoSuchElementException();
+            log.info("User with email {} wasn't found! ", email);
+            throw new UserNotFoundSuchElementException();
         }
     }
 
     @Transactional
     @Override
-    public UserSignUpDto getUserByPhoneNumber(String phone) {
-        log.info("getUserByPhoneNumber with an phone {}", phone);
-        return mapper.map(userRepository.findUserByPhoneNumber(phone), UserSignUpDto.class);
+    public Optional<FullUserDto> getUserByPhoneNumber(String phone) {
+        log.info("getUserByPhoneNumber with an phone : {}", phone);
+        try {
+            return Optional.of(mapper.map(userRepository.findUserByPhoneNumber(phone), FullUserDto.class));
+        } catch (IllegalArgumentException ex) {
+            log.info("User with phone number {} wasn't found! ", phone);
+            throw new UserNotFoundSuchElementException();
+        }
     }
 
     @Transactional
     @Override
-    public void updateUser(UserSignUpDto userSignUpDto, String email) {
-        log.info("updateUser by email{}", email);
-        User user = mapper.map(userSignUpDto, User.class);
-        userRepository.save(user);
+    public UserUpdateDto updateUser(UserUpdateDto userUpdateDto, String email) {
+        FullUserDto fullDto = getUserByEmail(email).orElseThrow();
+        log.info("updateUser by email : {}", email);
+        Optional<User> user = userRepository.findById(Integer.valueOf(fullDto.getId()));
+
+        String newFullName = userUpdateDto.getFullName() == null ? fullDto.getFullName() : userUpdateDto.getFullName();
+        String newEmail = userUpdateDto.getNewEmail() == null ? email : userUpdateDto.getNewEmail();
+        String newPassword = userUpdateDto.getPassword() == null ? fullDto.getPassword() : userUpdateDto.getPassword();
+        user.orElseThrow().setEmail(newEmail);
+        user.orElseThrow().setFullName(newFullName);
+        user.orElseThrow().setPassword(newPassword);
+
+        User updatedUser = userRepository.save(user.orElseThrow());
+        return mapper.map(updatedUser, UserUpdateDto.class);
     }
 
     @Override
-    public void updateUserAddress(String phone, String address) {
-        log.info("updateUserAddress by phone{}", phone);
-        userRepository.updateAddress(phone, address);
+    @Transactional
+    public FullUserDto updateUserAddress(String email, String address) {
+        log.info("updateUserAddress by email : {} ", email);
+        getUserByEmail(email).orElseThrow();
+        User user = userRepository.findUserByEmail(email);
+        userRepository.updateAddress(email, address);
+        User updatedUser = userRepository.save(user);
+        log.info("User is updated successfully");
+        return mapper.map(updatedUser, FullUserDto.class);
     }
 
     @Override
@@ -91,5 +124,11 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(e -> mapper.map(e, FullUserDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isStatusActive(String email) {
+        log.info("Checking if user with such email {} is active", email);
+        return Boolean.parseBoolean(String.valueOf(getUserByEmail(email).orElseThrow().getStatus().equals("ACTIVE")));
     }
 }

@@ -41,4 +41,5 @@ public class FullUserDto {
     @Size(min = 6, max = 20, message = "{wrong.password}")
     @Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})")
     private String password;
+    private String confirmedPassword;
 }

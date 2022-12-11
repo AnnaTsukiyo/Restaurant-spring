@@ -10,16 +10,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FoodRepository extends JpaRepository<Food, Integer> {
 
-    @Query(value = "SELECT f FROM Food f WHERE f.title = :title")
-    Food findFoodByTitle(@Param("title")String title);
+    @Query(value = "select f from Food f where f.id = :id")
+    Food findFoodById(@Param("id") String id);
+
+    @Query(value = "select f from Food f where f.title = :title")
+    Food findFoodByTitle(@Param("title") String title);
 
     @Modifying
-    @Query("UPDATE Food f set f.title = :title where f.id = ?1")
-    void updateTitle(@Param(value = "id") long id, @Param(value = "title") String title);
-    
-    @Modifying
-    @Query(value = "UPDATE food SET is_active = false WHERE title = ?1", nativeQuery = true)
-    void deleteFoodByTitle(@Param("title") String title);
+    @Query("update Food f set f.title = :title where f.id = :id")
+    void updateTitle(@Param(value = "id") String id, @Param(value = "title") String title);
 
-    Food findById(long id);
+    @Modifying
+    @Query(value = "update Food f set f.isActive = 'false' where f.title = :title")
+    void deactivateFoodByTitle(@Param("title") String title);
+
 }

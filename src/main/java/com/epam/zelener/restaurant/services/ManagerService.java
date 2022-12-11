@@ -1,37 +1,41 @@
 package com.epam.zelener.restaurant.services;
 
 import com.epam.zelener.restaurant.dtos.FullManagerDto;
+import com.epam.zelener.restaurant.dtos.ManagerCreateDto;
 import com.epam.zelener.restaurant.dtos.ManagerRequestDto;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface ManagerService {
 
     @Transactional
-    void createManager(ManagerRequestDto requestManagerDto);
+    Optional<FullManagerDto> createManager(ManagerCreateDto managerRequestDto);
 
     @Modifying
     @Transactional
-    void deleteManager(String name);
+    FullManagerDto deactivateManager(String name);
 
     @Transactional
-    ManagerRequestDto getManagerByName(String name);
+    Optional<FullManagerDto> getManagerByName(String name);
 
     @Transactional
-    ManagerRequestDto getManagerById(String id);
-
-    @Modifying
-    @Transactional
-    void updateManager(ManagerRequestDto requestManagerDto, String name);
+    Optional<FullManagerDto> getManagerById(String id);
 
     @Modifying
     @Transactional
-    void updateManagerName(long id, String name);
+    ManagerRequestDto updateManager(ManagerRequestDto requestManagerDto, String name);
+
+    @Modifying
+    @Transactional
+    FullManagerDto updateManagerName(String id, String name);
 
     @Transactional
     List<FullManagerDto> getAllManager();
+
+    boolean isStatusActive(String name);
 }

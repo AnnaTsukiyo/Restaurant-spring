@@ -1,41 +1,44 @@
 package com.epam.zelener.restaurant.services;
 
 import com.epam.zelener.restaurant.dtos.FullUserDto;
-import com.epam.zelener.restaurant.dtos.UserSignUpDto;
+import com.epam.zelener.restaurant.dtos.UserCreateDto;
+import com.epam.zelener.restaurant.dtos.UserUpdateDto;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface UserService {
 
     @Transactional
-    void createUser(UserSignUpDto userSignUpDto);
+    Optional<FullUserDto> createUser(UserCreateDto userCreateDto);
 
     @Modifying
     @Transactional
-    void deleteUser(String phoneNumber);
+    FullUserDto deactivateUser(String phoneNumber);
 
     @Transactional
-    UserSignUpDto getUserByEmail(String email);
+    Optional<FullUserDto> getUserByEmail(String email);
 
     @Transactional
-    UserSignUpDto getUserByPhoneNumber(String phoneNumber);
+    Optional<FullUserDto> getUserByPhoneNumber(String phoneNumber);
 
     @Modifying
     @Transactional
-    void updateUser(UserSignUpDto userSignUpDto, String email);
-
+    UserUpdateDto updateUser(UserUpdateDto userUpdateDto, String email);
 
     @Modifying
     @Transactional
-    void updateUserAddress(String phone, String address);
+    FullUserDto updateUserAddress(String email, String address);
 
     @Transactional
     List<FullUserDto> getAllUsers();
 
     @Transactional
     List<FullUserDto> getAllByPages(String page);
+
+    boolean isStatusActive(String email);
 }

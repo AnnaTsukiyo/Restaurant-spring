@@ -1,10 +1,12 @@
 package com.epam.zelener.restaurant.dtos;
 
+import com.epam.zelener.restaurant.model.User;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +17,12 @@ public class FullManagerDto {
 
     private String id;
     @NotBlank
-    @Size(min = 10, max = 30, message = "{wrong.name}")
+    @Size(min = 5, max = 30)
     private String name;
     @NotBlank
     private String age;
     @NotBlank
-    private String userPhoneNumber;
+    private List<User> userData;
     @NotBlank
     private String role;
     @NotBlank

@@ -1,8 +1,9 @@
 package com.epam.zelener.restaurant.services;
 
-import com.epam.zelener.restaurant.dtos.OrderDto;
+import com.epam.zelener.restaurant.dtos.FullOrderDto;
+import com.epam.zelener.restaurant.dtos.OrderCreateDto;
+import com.epam.zelener.restaurant.dtos.OrderRequestDto;
 import com.epam.zelener.restaurant.model.Order;
-import com.epam.zelener.restaurant.model.User;
 import com.epam.zelener.restaurant.repositories.DishRepository;
 import com.epam.zelener.restaurant.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,10 +32,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public OrderDto findOrderById(Long orderId) {
+    public Optional<FullOrderDto> findOrderById(String orderId) {
         log.info("findOrderById with id {}", orderId);
         try {
-            return mapper.map(orderRepository.getOrderById(orderId), OrderDto.class);
+            return Optional.of(mapper.map(orderRepository.findOrderById(orderId), FullOrderDto.class));
         } catch (IllegalArgumentException ex) {
             throw new NoSuchElementException();
         }
@@ -41,40 +43,54 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void createAnOrder(OrderDto orderDto) {
-        log.info("createAnOrder with userId {}", orderDto.getUserId());
-        orderRepository.save(mapper.map(orderDto, Order.class));
-    }
-
-
-    @Transactional
-    @Override
-    public Order findUserOrder(User user) {
-        log.info("findUserOrder for user {}", user);
-        return orderRepository.getByUser(user);
+    public Optional<FullOrderDto> createOrder(OrderCreateDto orderDto) {
+        log.info("createAnOrder ", orderDto.getOrderId());
+        Order order = mapper.map(orderDto,Order.class);
+        log.info("New Order is created", orderDto.getOrderId());
+        return findOrderById(orderDto.getOrderId());
     }
 
     @Transactional
     @Override
-    public void updateOrder(OrderDto orderDto, long id) {
-        Order order = mapper.map(orderDto, Order.class);
-        log.info("updateOrder method");
-        orderRepository.save(order);
+    public OrderRequestDto updateOrder(OrderRequestDto orderDto, String id) {
+        log.info("updateOrder with id {}", id);
+        FullOrderDto fullOrderDto = findOrderById(id).orElseThrow();
+        Optional<Order> order = orderRepository.findById(Long.valueOf(fullOrderDto.getOrderId()));
+
+        String newId = orderDto.getOrderId() == null ? id : orderDto.getOrderId();
+        String totalPrice = orderDto.getTotalPrice() == null ? fullOrderDto.getTotalPrice() : orderDto.getTotalPrice();
+        String methodOfReceiving = orderDto.getMethodOfReceiving() == null ? fullOrderDto.getMethodOfReceiving() : orderDto.getMethodOfReceiving();
+
+        order.orElseThrow().setTotalPrice(Double.valueOf(totalPrice));
+        order.orElseThrow().setMethodOfReceiving(methodOfReceiving);
+        order.orElseThrow().setId(Long.valueOf(newId));
+
+        Order updatedOrder = orderRepository.save(order.orElseThrow());
+            log.info("Order is updated successfully");
+            return mapper.map(updatedOrder, OrderRequestDto.class);
     }
 
     @Transactional
     @Override
-    public void updateOrderStatus(Long id, String status) {
+    public OrderRequestDto updateOrderStatus(String id, String status) {
+
         log.info("updateOrderStatus by id {}", id);
+        findOrderById(id).orElseThrow();
+        Order order = orderRepository.findOrderById(id);
         orderRepository.updateOrderStatus(id, status);
+
+        Order updatedOrder = orderRepository.save(order);
+        log.info("Order is updated successfully");
+        return mapper.map(updatedOrder, OrderRequestDto.class);
+
     }
 
     @Transactional
     @Override
-    public List<OrderDto> showAllOrder() {
+    public List<FullOrderDto> showAllOrder() {
         log.info("showAllOrder order ");
         return orderRepository.findAll().stream()
-                .map(e -> mapper.map(e, OrderDto.class))
+                .map(e -> mapper.map(e, FullOrderDto.class))
                 .collect(Collectors.toList());
     }
 }

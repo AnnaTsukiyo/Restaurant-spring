@@ -10,18 +10,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, Integer> {
 
-    @Query(value = "SELECT m FROM Manager m WHERE m.name = ?1")
+    @Query(value = "select m from Manager m where m.name = :name")
     Manager findManagerByName(@Param("name") String name);
 
-    @Query(value = "SELECT m FROM Manager m WHERE m.id = ?1")
-    Manager findManagerById(String id);
+    @Query(value = "select m from Manager m where m.id = :id")
+    Manager findManagerById(@Param("id") String id);
 
     @Modifying
-    @Query(value = "UPDATE Manager m SET rms.manager.status= 'INACTIVE' WHERE name =?1", nativeQuery = true)
+    @Query(value = "update Manager m set m.status= 'INACTIVE' where m.name = :name")
     void updateStatus(@Param("name") String name);
 
     @Modifying
-    @Query("UPDATE Manager m SET m.name =:name WHERE m.id = ?1")
-    void updateName(@Param(value = "id") long id, @Param(value = "name")  String name);
+    @Query("update Manager m set m.name = :name where m.id = :id")
+    void updateName(@Param(value = "id") String id, @Param(value = "name") String name);
 
 }

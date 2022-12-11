@@ -14,20 +14,21 @@ import java.util.List;
 @Repository
 public interface DishRepository extends JpaRepository<Dish, Long> {
 
-    Dish findById(long id);
+    @Query(value = "select d from Dish d where d.id = :id")
+    Dish findDishById(@Param("id") String id);
 
-    @Query(value = "SELECT d FROM Dish d WHERE d.title LIKE %:title%")
+    @Query(value = "select d from Dish d where d.title like %:title%")
     Dish findDishByTitle(@Param("title") String title);
 
-    @Query(value = "SELECT d FROM Dish d WHERE d.category = :category")
+    @Query(value = "select d from Dish d where d.category = :category")
     List<Dish> findByCategory(Pageable pageable, @Param("category") Categories category);
 
     @Modifying
-    @Query("UPDATE Dish d set d.title = :title where d.id = ?1")
-    void updateTitle(@Param(value = "id") Long id, @Param(value = "title") String title);
+    @Query("update Dish d set d.title = :title where d.id = :id")
+    void updateTitle(@Param(value = "id") String id, @Param(value = "title") String title);
 
     @Modifying
-    @Query(value = "UPDATE dish SET is_active = false WHERE title = ?1", nativeQuery = true)
-    void deleteDishByTitle(@Param("title") String title);
+    @Query(value = "update Dish d SET d.isActive = 'false' where d.title = :title")
+    void deactivateDishByTitle(@Param("title") String title);
 
 }

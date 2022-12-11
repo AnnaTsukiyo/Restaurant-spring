@@ -16,16 +16,16 @@ import java.util.List;
 @NoArgsConstructor
 public class FullRecipeDto {
     @NotBlank
-    private int id;
+    private String id;
     @NotBlank
-    private int number;
+    private String number;
     @NotBlank
     private String isActive;
     @NotBlank
     @Size(min = 5, message = "{wrong.title}")
     private String title;
     @NotBlank
-    private int duration;
+    private String duration;
     @NotBlank
     private String status;
     @NotBlank

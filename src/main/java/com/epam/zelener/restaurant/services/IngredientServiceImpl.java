@@ -1,5 +1,7 @@
 package com.epam.zelener.restaurant.services;
 
+import com.epam.zelener.restaurant.dtos.FullIngredientDto;
+import com.epam.zelener.restaurant.dtos.IngredientCreateDto;
 import com.epam.zelener.restaurant.dtos.IngredientRequestDto;
 import com.epam.zelener.restaurant.model.Ingredient;
 import com.epam.zelener.restaurant.repositories.IngredientRepository;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -19,50 +23,89 @@ import java.util.stream.Collectors;
 public class IngredientServiceImpl implements IngredientService {
 
     @Resource
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     private final IngredientRepository ingredientRepository;
 
     @Override
-    public void createIngredient(IngredientRequestDto ingredientRequestDto) {
-        Ingredient ingredient = mapper.map(ingredientRequestDto, Ingredient.class);
-        log.info("New ingredient is created with ID {}", ingredientRequestDto.getId());
-        ingredientRepository.save(ingredient);
+    public Optional<FullIngredientDto> createIngredient(IngredientCreateDto ingredientRequestDto) {
+        log.info("New Ingredient is created with an id {}", ingredientRequestDto.getId());
+        ingredientRepository.save(mapper.map(ingredientRequestDto, Ingredient.class));
+        return getIngredientById(ingredientRequestDto.getId());
     }
 
     @Override
-    public void deleteIngredient(String id) {
+    @Transactional
+    public FullIngredientDto deactivateIngredient(String id) {
         log.info("deleteIngredient with id {}", id);
-        Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id), Ingredient.class);
-        ingredientRepository.save(ingredient);
+        FullIngredientDto requestDto = getIngredientById(id).orElseThrow();
+        Optional<Ingredient> ingredient = ingredientRepository.findById(Integer.valueOf(requestDto.getId()));
+        ingredientRepository.deactivateIngredientById(id);
+        ingredient.orElseThrow().setIsActive(false);
+        Ingredient deactivatedIngredient = ingredientRepository.save(ingredient.orElseThrow());
+        log.info("Ingredient {} is deactivated", ingredient);
+        return mapper.map(deactivatedIngredient, FullIngredientDto.class);
+
     }
 
     @Override
     @Transactional
-    public IngredientRequestDto getIngredientById(String id) {
+    public Optional<FullIngredientDto> getIngredientById(String id) {
         log.info("getIngredientById {}", id);
-        return mapper.map(ingredientRepository.findIngredientById(id), IngredientRequestDto.class);
-    }
-
-    @Override
-    public void updateIngredient(IngredientRequestDto ingredientRequestDto, String id) {
-        Ingredient ingredient = mapper.map(ingredientRepository.findIngredientById(id), Ingredient.class);
-        log.info("updateIngredient by id {}", id);
-        ingredientRepository.save(ingredient);
-    }
-
-    @Override
-    public void updateIngredientQuantity(long id, int quantity) {
-        log.info("updateIngredientQuantity with the quantity {}", quantity);
-        ingredientRepository.updateQuantity(id,quantity);
+        try {
+            return Optional.of(mapper.map(ingredientRepository.findIngredientById(id), FullIngredientDto.class));
+        } catch (IllegalArgumentException ex) {
+            log.info("Ingredient with id {} wasn't found! ", id);
+            throw new NoSuchElementException();
+        }
     }
 
     @Override
     @Transactional
-    public List<IngredientRequestDto> getAllIngredients() {
+    public IngredientRequestDto updateIngredient(IngredientRequestDto ingredientRequestDto, String id) {
+
+        FullIngredientDto fullIngredientDto = getIngredientById(id).orElseThrow();
+        log.info("updateIngredient by id {}", id);
+        Optional<Ingredient> ingredient = ingredientRepository.findById(Integer.valueOf(id));
+
+        String newId = ingredientRequestDto.getId() == null ? id : ingredientRequestDto.getId();
+        String units = (ingredientRequestDto.getUnits() == null ? fullIngredientDto.getUnits() : ingredientRequestDto.getUnits());
+        String quantity = (ingredientRequestDto.getQuantity() == null ? fullIngredientDto.getQuantity() : ingredientRequestDto.getQuantity());
+        ingredient.orElseThrow().setId(Long.valueOf(newId));
+        ingredient.orElseThrow().setUnits(Integer.parseInt(units));
+        ingredient.orElseThrow().setQuantity(Integer.parseInt(quantity));
+        Ingredient updatedIngredient = ingredientRepository.save(ingredient.orElseThrow());
+
+        log.info("Ingredient is updated successfully");
+        return mapper.map(updatedIngredient, IngredientRequestDto.class);
+
+    }
+
+    @Override
+    public IngredientRequestDto updateIngredientQuantity(String id, String quantity) {
+        log.info("updateIngredientQuantity with the quantity {}", quantity);
+        getIngredientById(id).orElseThrow();
+
+        Ingredient ingredient = ingredientRepository.getById(Integer.valueOf(id));
+        ingredientRepository.updateQuantity(id, quantity);
+
+        Ingredient updatedIngredient = ingredientRepository.save(ingredient);
+        log.info("User is updated successfully");
+        return mapper.map(updatedIngredient, IngredientRequestDto.class);
+    }
+
+    @Override
+    @Transactional
+    public List<FullIngredientDto> getAllIngredients() {
         log.info("getAllIngredients method");
         return ingredientRepository.findAll().stream()
-                .map(e -> mapper.map(e, IngredientRequestDto.class))
+                .map(e -> mapper.map(e, FullIngredientDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isStatusActive(String id) {
+        log.info("Checking if ingredient with such id {} is active", id);
+        return Boolean.parseBoolean(getIngredientById(id).orElseThrow().getIsActive());
     }
 }
