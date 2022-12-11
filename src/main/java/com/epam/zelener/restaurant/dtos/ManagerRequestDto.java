@@ -7,12 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FoodRequestDto {
+public class ManagerRequestDto {
 
-    private String title;
-
-    private String description;
-
-    private String isActive;
-
+    private String name;
+    private String role;
+    private String position;
 }

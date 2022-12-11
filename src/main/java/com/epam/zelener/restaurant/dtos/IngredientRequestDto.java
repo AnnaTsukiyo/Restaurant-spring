@@ -7,12 +7,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FoodRequestDto {
+public class IngredientRequestDto {
 
-    private String title;
+    private String id;
 
-    private String description;
+    private String quantity;
 
-    private String isActive;
+    private String units;
+
 
 }
