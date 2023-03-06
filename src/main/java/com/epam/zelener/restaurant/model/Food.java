@@ -31,6 +31,10 @@ public class Food {
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20) default 'ACTIVE'")
+    private Status status;
+
     @Column(nullable = false)
     private LocalDate prodDate;
 

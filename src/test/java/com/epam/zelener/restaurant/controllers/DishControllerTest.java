@@ -5,6 +5,7 @@ import com.epam.zelener.restaurant.dtos.FullDishDto;
 import com.epam.zelener.restaurant.exceptions.DishNotFoundSuchElementException;
 import com.epam.zelener.restaurant.model.Food;
 import com.epam.zelener.restaurant.model.Ingredient;
+import com.epam.zelener.restaurant.model.Status;
 import com.epam.zelener.restaurant.services.DishService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -71,7 +72,7 @@ class DishControllerTest {
     @BeforeEach
     void init() {
         fullDishDto = new FullDishDto("1", "Sushi Dragon", "200", "true", "250", "SUSHI", "ACTIVE",
-                List.of(new Ingredient(1L, List.of(new Food(1L, "Salmon", "Smoked salmon from Norway", true,
+                List.of(new Ingredient(1L, List.of(new Food(1L, "Salmon", "Smoked salmon from Norway", true, Status.ACTIVE,
                         LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2022, Month.DECEMBER, 10), LocalDateTime.now(), LocalDateTime.now())),
                         true, 20, 3)));
@@ -110,13 +111,13 @@ class DishControllerTest {
     void getByCategory_positiveTest() throws Exception {
         FullDishDto greenTea = new FullDishDto("2", "Green tea", "35", "true", "250", "DRINKS", "ACTIVE",
                 List.of(new Ingredient(2L, List.of(new Food(2L, "Green tea", "Green tea Ahmad",
-                        true, LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE, LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.JANUARY, 25),
                         LocalDateTime.now(), LocalDateTime.now())),
                         true, 1, 1)));
         FullDishDto coffeeBlack = new FullDishDto("3", "Coffee Black", "40", "true", "300", String.valueOf(DRINKS), "ACTIVE", List.of(
                 new Ingredient(2L, List.of(new Food(2L, "Coffee", "  Coffee Robusta 10",
-                        true, LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.DECEMBER, 10),
                         LocalDateTime.now(), LocalDateTime.now())), true, 20, 1)));
 
@@ -179,13 +180,13 @@ class DishControllerTest {
 
         FullDishDto greenTea = new FullDishDto("2", "Green tea", "35", "true", "250", "DRINKS", "ACTIVE",
                 List.of(new Ingredient(2L, List.of(new Food(2L, "Green tea", "Green tea Ahmad",
-                        true, LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.JANUARY, 25),
                         LocalDateTime.now(), LocalDateTime.now())),
                         true, 1, 1)));
         FullDishDto coffeeBlack = new FullDishDto("3", "Coffee Black", "40", "true", "300", String.valueOf(DRINKS), "ACTIVE", List.of(
                 new Ingredient(2L, List.of(new Food(2L, "Coffee", "  Coffee Robusta 10",
-                        true, LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.DECEMBER, 10),
                         LocalDateTime.now(), LocalDateTime.now())), true, 20, 1)));
 

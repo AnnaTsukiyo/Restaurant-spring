@@ -66,7 +66,7 @@ class ManagerControllerTest {
 
     @BeforeEach
     void init() {
-        fullManagerDto = new FullManagerDto("1", "Scarlett", "25", List.of(new User(1L, "Jonas Tidermann", "+3806567898", "address", "admin@gmail.com", "passwordP1",
+        fullManagerDto = new FullManagerDto("1L", "Scarlett", "25", List.of(new User(1L, "Jonas Tidermann", "+3806567898", "address", "admin@gmail.com", "passwordP1","passwordP1",
                 "2000-01-01", Role.GUEST, ACTIVE, LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now())), String.valueOf(Role.MANAGER), "ACTIVE", "Custom Manager", "10000");
     }
 

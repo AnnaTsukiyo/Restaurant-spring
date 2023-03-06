@@ -37,6 +37,10 @@ public class Dish {
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20) default 'ACTIVE'")
+    private Status status;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "dish_id")
     private List<Ingredient> ingredientList;

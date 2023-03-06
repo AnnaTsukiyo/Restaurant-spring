@@ -3,7 +3,6 @@ package com.epam.zelener.restaurant.dtos;
 import com.sun.istack.NotNull;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -12,7 +11,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @ToString
 public class IngredientCreateDto {
-    @NotBlank
+
     private String id;
     @NotNull
     @Pattern(regexp = "^\\d{1,4}", message = "{wrong.quantity}")

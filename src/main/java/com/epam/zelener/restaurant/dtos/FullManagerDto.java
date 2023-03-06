@@ -15,6 +15,7 @@ import java.util.List;
 @ToString
 public class FullManagerDto {
 
+    @NotBlank
     private String id;
     @NotBlank
     @Size(min = 5, max = 30)

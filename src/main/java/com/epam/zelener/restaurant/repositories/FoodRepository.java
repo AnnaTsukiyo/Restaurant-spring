@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FoodRepository extends JpaRepository<Food, Integer> {
+public interface FoodRepository extends JpaRepository<Food, Long> {
 
     @Query(value = "select f from Food f where f.id = :id")
     Food findFoodById(@Param("id") String id);
@@ -21,7 +21,7 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
     void updateTitle(@Param(value = "id") String id, @Param(value = "title") String title);
 
     @Modifying
-    @Query(value = "update Food f set f.isActive = 'false' where f.title = :title")
-    void deactivateFoodByTitle(@Param("title") String title);
+    @Query(value = "update Food f set f.status = 'INACTIVE' where f.title = :title")
+    void updateStatus(@Param(value = "title") String title);
 
 }

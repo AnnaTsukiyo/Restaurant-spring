@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 public interface IngredientService {
 
     @Transactional
-    Optional<FullIngredientDto> createIngredient(IngredientCreateDto ingredientRequestDto);
+    Optional<FullIngredientDto> createIngredient(@Valid IngredientCreateDto ingredientRequestDto);
 
     @Transactional
     FullIngredientDto deactivateIngredient(String id);

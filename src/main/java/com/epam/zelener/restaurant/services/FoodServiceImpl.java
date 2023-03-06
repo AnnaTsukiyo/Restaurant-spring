@@ -4,6 +4,7 @@ import com.epam.zelener.restaurant.dtos.FoodCreateDto;
 import com.epam.zelener.restaurant.dtos.FoodRequestDto;
 import com.epam.zelener.restaurant.dtos.FullFoodDto;
 import com.epam.zelener.restaurant.model.Food;
+import com.epam.zelener.restaurant.model.Status;
 import com.epam.zelener.restaurant.repositories.FoodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,9 +42,10 @@ public class FoodServiceImpl implements FoodService {
 
         log.info("deactivateFood with title {}", title);
         FullFoodDto foodDto = getFoodByTitle(title).orElseThrow();
-        Optional<Food> food = foodRepository.findById(Integer.valueOf(foodDto.getId()));
-        foodRepository.deactivateFoodByTitle(title);
+        Optional<Food> food = foodRepository.findById(Long.parseLong(foodDto.getId()));
+        foodRepository.updateStatus(title);
         food.orElseThrow().setIsActive(false);
+        food.orElseThrow().setStatus(Status.INACTIVE);
         Food deactivatedFood = foodRepository.save(food.orElseThrow());
         log.info("Food {} is deactivated", food);
         return mapper.map(deactivatedFood, FullFoodDto.class);

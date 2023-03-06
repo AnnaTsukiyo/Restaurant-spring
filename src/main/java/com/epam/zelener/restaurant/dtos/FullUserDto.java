@@ -1,8 +1,10 @@
 package com.epam.zelener.restaurant.dtos;
 
 import com.epam.zelener.restaurant.validation.EmailAlreadyExists;
+import com.epam.zelener.restaurant.validation.PhoneNumberExists;
 import com.epam.zelener.restaurant.validation.WrongConfirmedPassword;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -24,6 +26,7 @@ public class FullUserDto {
     @NotBlank
     @Pattern(regexp = "^\\+?(38)?(\\d{10,11})$")
     @Size(min = 10, message = "{wrong.phoneNumber}")
+    @PhoneNumberExists
     private String phoneNumber;
     private String role;
     @NotBlank
@@ -32,6 +35,7 @@ public class FullUserDto {
     @NotBlank
     private String status;
     @NotBlank
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String dateOfBirth;
     @NotBlank
     @Email
@@ -41,5 +45,6 @@ public class FullUserDto {
     @Size(min = 6, max = 20, message = "{wrong.password}")
     @Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})")
     private String password;
+    @NotBlank
     private String confirmedPassword;
 }

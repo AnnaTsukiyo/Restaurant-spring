@@ -41,8 +41,8 @@ public class IngredientController {
     public ResponseEntity<Object> createIngredient(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Object Ingredient is to be created")
                                                    @Valid @RequestBody IngredientCreateDto ingredientRequestDto) {
         log.info("Request to create a new Ingredient :{}", ingredientRequestDto);
-        ingredientService.createIngredient(ingredientRequestDto);
-        return new ResponseEntity<>(ingredientRequestDto.getId() + " -- A new ingredient with id {} is created", HttpStatus.OK);
+        Optional<FullIngredientDto> fullIngredientDto = ingredientService.createIngredient(ingredientRequestDto);
+        return new ResponseEntity<>(fullIngredientDto + " -- A new ingredient is created", HttpStatus.OK);
     }
 
     @Operation(summary = "Delete ingredient from a database")

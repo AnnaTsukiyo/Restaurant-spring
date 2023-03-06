@@ -5,6 +5,7 @@ import com.epam.zelener.restaurant.dtos.DishRequestDto;
 import com.epam.zelener.restaurant.dtos.FullDishDto;
 import com.epam.zelener.restaurant.model.Categories;
 import com.epam.zelener.restaurant.model.Dish;
+import com.epam.zelener.restaurant.model.Status;
 import com.epam.zelener.restaurant.repositories.DishRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -49,6 +50,7 @@ public class DishServiceImpl implements DishService {
         Optional<Dish> dish = dishRepository.findById(Long.parseLong(dishDto.getId()));
         dishRepository.deactivateDishByTitle(title);
         dish.orElseThrow().setIsActive(false);
+        dish.orElseThrow().setStatus(Status.INACTIVE);
         Dish deactivatedDish = dishRepository.save(dish.orElseThrow());
         log.info("Dish {} is deactivated", dish);
         return mapper.map(deactivatedDish, FullDishDto.class);

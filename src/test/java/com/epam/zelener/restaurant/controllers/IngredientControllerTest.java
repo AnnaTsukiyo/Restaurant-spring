@@ -4,6 +4,7 @@ import com.epam.zelener.restaurant.dtos.FullIngredientDto;
 import com.epam.zelener.restaurant.dtos.IngredientCreateDto;
 import com.epam.zelener.restaurant.dtos.IngredientRequestDto;
 import com.epam.zelener.restaurant.model.Food;
+import com.epam.zelener.restaurant.model.Status;
 import com.epam.zelener.restaurant.services.IngredientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -64,7 +65,7 @@ class IngredientControllerTest {
 
     @BeforeEach
     void init() {
-        fullIngredientDto = new FullIngredientDto("1", List.of(new Food(1L, "Salmon", "Smoked salmon from Norway", true,
+        fullIngredientDto = new FullIngredientDto("1", List.of(new Food(1L, "Salmon", "Smoked salmon from Norway", true, Status.ACTIVE,
                 LocalDate.of(2022, Month.DECEMBER, 1),
                 LocalDate.of(2022, Month.DECEMBER, 10), LocalDateTime.now(), LocalDateTime.now())), "true", "20", "3", "ACTIVE");
     }

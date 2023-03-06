@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,10 +29,10 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientRepository ingredientRepository;
 
     @Override
-    public Optional<FullIngredientDto> createIngredient(IngredientCreateDto ingredientRequestDto) {
-        log.info("New Ingredient is created with an id {}", ingredientRequestDto.getId());
-        ingredientRepository.save(mapper.map(ingredientRequestDto, Ingredient.class));
-        return getIngredientById(ingredientRequestDto.getId());
+    public Optional<FullIngredientDto> createIngredient(@Valid IngredientCreateDto ingredientRequestDto) {
+        log.info("New Ingredient is created ");
+        Ingredient ingredient = ingredientRepository.save(mapper.map(ingredientRequestDto, Ingredient.class));
+        return Optional.of(mapper.map(ingredient, FullIngredientDto.class));
     }
 
     @Override
@@ -39,9 +40,9 @@ public class IngredientServiceImpl implements IngredientService {
     public FullIngredientDto deactivateIngredient(String id) {
         log.info("deleteIngredient with id {}", id);
         FullIngredientDto requestDto = getIngredientById(id).orElseThrow();
-        Optional<Ingredient> ingredient = ingredientRepository.findById(Integer.valueOf(requestDto.getId()));
-        ingredientRepository.deactivateIngredientById(id);
-        ingredient.orElseThrow().setIsActive(false);
+        Optional<Ingredient> ingredient = ingredientRepository.findById(Long.valueOf((requestDto.getId())));
+        ingredientRepository.deactivateIngredientById(Long.parseLong(id));
+        ingredient.orElseThrow().setActive(true);
         Ingredient deactivatedIngredient = ingredientRepository.save(ingredient.orElseThrow());
         log.info("Ingredient {} is deactivated", ingredient);
         return mapper.map(deactivatedIngredient, FullIngredientDto.class);
@@ -53,7 +54,7 @@ public class IngredientServiceImpl implements IngredientService {
     public Optional<FullIngredientDto> getIngredientById(String id) {
         log.info("getIngredientById {}", id);
         try {
-            return Optional.of(mapper.map(ingredientRepository.findIngredientById(id), FullIngredientDto.class));
+            return Optional.of(mapper.map(ingredientRepository.findIngredientById(Long.valueOf(id)), FullIngredientDto.class));
         } catch (IllegalArgumentException ex) {
             log.info("Ingredient with id {} wasn't found! ", id);
             throw new NoSuchElementException();
@@ -66,7 +67,7 @@ public class IngredientServiceImpl implements IngredientService {
 
         FullIngredientDto fullIngredientDto = getIngredientById(id).orElseThrow();
         log.info("updateIngredient by id {}", id);
-        Optional<Ingredient> ingredient = ingredientRepository.findById(Integer.valueOf(id));
+        Optional<Ingredient> ingredient = ingredientRepository.findById(Long.valueOf((id)));
 
         String newId = ingredientRequestDto.getId() == null ? id : ingredientRequestDto.getId();
         String units = (ingredientRequestDto.getUnits() == null ? fullIngredientDto.getUnits() : ingredientRequestDto.getUnits());
@@ -86,8 +87,8 @@ public class IngredientServiceImpl implements IngredientService {
         log.info("updateIngredientQuantity with the quantity {}", quantity);
         getIngredientById(id).orElseThrow();
 
-        Ingredient ingredient = ingredientRepository.getById(Integer.valueOf(id));
-        ingredientRepository.updateQuantity(id, quantity);
+        Ingredient ingredient = ingredientRepository.getById(Long.valueOf(id));
+        ingredientRepository.updateQuantity(Long.parseLong(id), quantity);
 
         Ingredient updatedIngredient = ingredientRepository.save(ingredient);
         log.info("User is updated successfully");

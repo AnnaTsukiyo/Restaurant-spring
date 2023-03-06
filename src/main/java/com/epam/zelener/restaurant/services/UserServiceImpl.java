@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public Optional<FullUserDto> createUser(UserCreateDto userCreateDto) {
         log.info("createUser with email {}", userCreateDto.getEmail());
         userRepository.save(mapper.map(userCreateDto, User.class));
-        log.info("User was created successfully");
+        log.info("User with an email {} created successfully",userCreateDto.getEmail());
         return getUserByEmail(userCreateDto.getEmail());
     }
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public FullUserDto deactivateUser(String email) {
         log.info("deactivateUser with email {}", email);
         FullUserDto userDto = getUserByEmail(email).orElseThrow();
-        Optional<User> user = userRepository.findById(Integer.valueOf(userDto.getId()));
+        Optional<User> user = userRepository.findById(Long.valueOf((userDto.getId())));
         userRepository.updateStatus(email);
         user.orElseThrow().setStatus(Status.valueOf("INACTIVE"));
         User deactivatedUser = userRepository.save(user.orElseThrow());
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     public UserUpdateDto updateUser(UserUpdateDto userUpdateDto, String email) {
         FullUserDto fullDto = getUserByEmail(email).orElseThrow();
         log.info("updateUser by email : {}", email);
-        Optional<User> user = userRepository.findById(Integer.valueOf(fullDto.getId()));
+        Optional<User> user = userRepository.findById(Long.valueOf((fullDto.getId())));
 
         String newFullName = userUpdateDto.getFullName() == null ? fullDto.getFullName() : userUpdateDto.getFullName();
         String newEmail = userUpdateDto.getNewEmail() == null ? email : userUpdateDto.getNewEmail();

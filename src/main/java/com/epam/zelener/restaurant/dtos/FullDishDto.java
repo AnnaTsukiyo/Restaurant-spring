@@ -1,6 +1,7 @@
 package com.epam.zelener.restaurant.dtos;
 
 import com.epam.zelener.restaurant.model.Ingredient;
+import com.epam.zelener.restaurant.validation.TitleAlreadyExists;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -17,6 +18,7 @@ public class FullDishDto {
 
     @NotBlank
     private String id;
+    @TitleAlreadyExists
     @NotBlank
     @Size(min = 5, message = "{wrong.title}")
     private String title;

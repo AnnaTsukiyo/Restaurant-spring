@@ -89,7 +89,7 @@ public class UserController {
                 return new ResponseEntity<>(email + " –- Invalid email provided.", HttpStatus.BAD_REQUEST);
             } else {
                 Optional<FullUserDto> user = userService.getUserByEmail(email);
-                log.info("Request to get a FullSignUpDto by the email :{}", email);
+                log.info("Request to get User by the email :{}", email);
                 return new ResponseEntity<>(user, HttpStatus.OK);
             }
         } catch (UserNotFoundSuchElementException e) {
@@ -101,14 +101,14 @@ public class UserController {
     @Operation(summary = "Update user by its email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The user is updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid email is provided"),
+          //  @ApiResponse(responseCode = "400", description = "Invalid email is provided"),
             @ApiResponse(responseCode = "404", description = "User is not found")})
     @PatchMapping(value = "/update/{email}")
     public ResponseEntity<Object> updateUser(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable("email") String email) {
         try {
             userService.updateUser(userUpdateDto, email);
             log.info("Request to update User with email:{}", email);
-            return new ResponseEntity<>(userUpdateDto.getFullName() + " --User with email is updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>(userUpdateDto.getFullName() + " --User with a given email is updated successfully", HttpStatus.OK);
         } catch (UserNotFoundSuchElementException e) {
             log.error("User with such email was not found");
             return new ResponseEntity<>("User with such email was not found " + email, HttpStatus.NOT_FOUND);

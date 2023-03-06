@@ -28,7 +28,7 @@ public class User {
     @Column
     private String phoneNumber;
 
-    @Column
+    @Column(columnDefinition = "varchar(50) default 'UKRAINE'")
     private String address;
 
     @Email
@@ -37,6 +37,9 @@ public class User {
 
     @Column
     private String password;
+
+    @Column
+    private String confirmedPassword;
 
     @Column
     private String dateOfBirth;

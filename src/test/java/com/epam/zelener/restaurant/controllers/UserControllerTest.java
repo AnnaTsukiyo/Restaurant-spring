@@ -69,7 +69,7 @@ class UserControllerTest {
     @Test
     void createUser_positiveTest() throws Exception {
 
-        UserCreateDto createdUser = new UserCreateDto("Jonas Kahnwald", "GUEST", "jonas@gmail.com", "passwordP1", "passwordP1");
+        UserCreateDto createdUser = new UserCreateDto("Jonas Kahnwald", "GUEST", "jonas@gmail.com", "+38076543456","2000-01-01", "passwordP1", "passwordP1");
         when(userService.createUser(createdUser)).thenReturn(Optional.of(fullUserDto));
         when(userService.getUserByEmail("jonas@gmail.com")).thenThrow(UserNotFoundSuchElementException.class);
 
@@ -85,7 +85,7 @@ class UserControllerTest {
     @Test
     void createUser_negativeTest() throws Exception {
 
-        UserCreateDto createdUser = new UserCreateDto("Jordan Merryland", String.valueOf(GUEST), "jonas@gmail.com", "passwordP1", null);
+        UserCreateDto createdUser = new UserCreateDto("Jordan Merryland", String.valueOf(GUEST), "jonas@gmail.com", "+38076543456","2000-01-01","passwordP1", null);
         lenient().when(userService.createUser(createdUser)).thenReturn(Optional.of(fullUserDto));
         lenient().when(userService.getUserByEmail("jonas@gmail.com")).thenReturn(Optional.of(fullUserDto));
 

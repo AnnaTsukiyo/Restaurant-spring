@@ -45,13 +45,13 @@ public class FoodController {
         return new ResponseEntity<>(foodCreateDto.getTitle() + " -- A new food with a title {} is created", HttpStatus.OK);
     }
 
-    @Operation(summary = "Deactivate a food from a database")
+    @Operation(summary = "Deactivate a food  by changing status to INACTIVE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Food is successfully deactivated"),
             @ApiResponse(responseCode = "404", description = "Food is not found"),
     })
     @DeleteMapping(value = "/deactivate/{title}")
-    public ResponseEntity<Object> deactivateFood(@PathVariable String title) {
+    public ResponseEntity<Object> deactivateFood(@PathVariable ("title") String title) {
         log.info("Request to deactivate a Food with a title:{}", title);
         try {
             if (!foodService.isStatusActive(title)) {

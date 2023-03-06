@@ -8,13 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ManagerRepository extends JpaRepository<Manager, Integer> {
+public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-    @Query(value = "select m from Manager m where m.name = :name")
-    Manager findManagerByName(@Param("name") String name);
+    @Query(value = "select m from Manager m where m.name = ?1")
+    Manager findManagerByName(@Param(value = "name") String name);
 
     @Query(value = "select m from Manager m where m.id = :id")
-    Manager findManagerById(@Param("id") String id);
+    Manager findManagerById(@Param(value = "id") long id);
 
     @Modifying
     @Query(value = "update Manager m set m.status= 'INACTIVE' where m.name = :name")

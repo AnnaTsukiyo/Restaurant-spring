@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class DishRequestDto {
+
+
     private String title;
 
     private String price;

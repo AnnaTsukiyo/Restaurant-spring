@@ -3,7 +3,6 @@ package com.epam.zelener.restaurant.controllers;
 import com.epam.zelener.restaurant.dtos.FullManagerDto;
 import com.epam.zelener.restaurant.dtos.ManagerCreateDto;
 import com.epam.zelener.restaurant.dtos.ManagerRequestDto;
-import com.epam.zelener.restaurant.exceptions.UserNotFoundSuchElementException;
 import com.epam.zelener.restaurant.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +37,7 @@ public class ManagerController {
                                                 @RequestBody @Valid ManagerCreateDto managerRequestDto) {
         log.info("Request to create a new Manager :{}", managerRequestDto);
         managerService.createManager(managerRequestDto);
+        log.info("Manager was created {}", managerRequestDto.getName());
         return new ResponseEntity<>(managerRequestDto.getName() + " -- A new manager with name{} is created", HttpStatus.OK);
     }
 
@@ -78,15 +78,15 @@ public class ManagerController {
         }
     }
 
-    @Operation(summary = "Get a manager by its id")
+    @Operation(summary = "Get a manager by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the manager successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ManagerRequestDto.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid id provided", content = @Content),
             @ApiResponse(responseCode = "404", description = "Manager is not found", content = @Content)})
 
-    @GetMapping("/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getManagerById(@PathVariable String id) {
         try {
-            if (managerService.getManagerById(id).isEmpty() || managerService.getManagerById(id) == null) {
+            if (managerService.getManagerById(id).isEmpty()) {
                 log.warn("There is no manager with a given id : {} !", id);
                 return new ResponseEntity<>(id + " –- Invalid id provided.", HttpStatus.BAD_REQUEST);
             } else {
@@ -99,19 +99,41 @@ public class ManagerController {
         }
     }
 
+    @Operation(summary = "Get a manager by name")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the manager successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ManagerRequestDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid id provided", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Manager is not found", content = @Content)})
+
+    @GetMapping("/get/name/{name}")
+    public ResponseEntity<Object> getManagerByName(@PathVariable String name) {
+        try {
+            if (managerService.getManagerByName(name).isEmpty()) {
+                log.warn("There is no manager with a given name : {} !", name);
+                return new ResponseEntity<>(name + " –- Invalid name provided.", HttpStatus.BAD_REQUEST);
+            } else {
+                Optional<FullManagerDto> manager = managerService.getManagerByName(name);
+                log.info("Request to get a ManagerRequestDto by the name :{}", name);
+                return new ResponseEntity<>(manager, HttpStatus.OK);
+            }
+        } catch (NoSuchElementException e) {
+            log.error("Manager with such name {} doesn't exist", name);
+            return new ResponseEntity<>(name + " -- Manager with name {} doesn't exist ", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @Operation(summary = "Update manager by its name")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The manager is updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid name is  provided"),
             @ApiResponse(responseCode = "404", description = "Manager is not found")})
 
-    @PatchMapping(value = "/{name}")
+    @PatchMapping(value = "/update/{name}")
     public ResponseEntity<Object> updateManager(@Valid @RequestBody ManagerRequestDto managerRequestDto, @PathVariable String name) {
         try {
             managerService.updateManager(managerRequestDto, name);
             log.info("Request to update a Manager with a name:{}", name);
-            return new ResponseEntity<>(name + " Manager with name {} is updated successfully", HttpStatus.OK);
-        } catch (UserNotFoundSuchElementException e) {
-            return new ResponseEntity<>(managerRequestDto.getName() + " --Manager with such email doesn't exist ", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(name + " Manager with the name {} is updated successfully", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(managerRequestDto.getName() + " --Manager with such name doesn't exist ", HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -38,14 +38,15 @@ public class DishController {
                     content = @Content)
     })
     @PostMapping("/create")
-    public ResponseEntity<Object> createDish(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Object User is to be created")
+    public ResponseEntity<Object> createDish(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Object Dish is to be created")
                                              @RequestBody @Valid DishCreateDto dishCreateDto) {
         log.info("Request to create a new Dish :{}", dishCreateDto);
         dishService.createDish(dishCreateDto);
+        log.info("Dish was created {}", dishCreateDto.getTitle());
         return new ResponseEntity<>(dishCreateDto.getTitle() + " -- A new dish with a title {} is created", HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete a dish from a database")
+    @Operation(summary = "Delete a dish  by changing status to INACTIVE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dish is successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Dish is not found"),

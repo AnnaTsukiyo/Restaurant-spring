@@ -43,7 +43,7 @@ public class ManagerServiceImpl implements ManagerService {
     public FullManagerDto deactivateManager(String name) {
         log.info("deactivateManager by name {}", name);
         FullManagerDto managerDto = getManagerByName(name).orElseThrow();
-        Optional<Manager> manager = managerRepository.findById(Integer.valueOf(managerDto.getId()));
+        Optional<Manager> manager = managerRepository.findById(Long.valueOf((managerDto.getId())));
         managerRepository.updateStatus(name);
         manager.orElseThrow().setStatus(Status.valueOf("INACTIVE"));
         Manager deactivatedManager = managerRepository.save(manager.orElseThrow());
@@ -54,11 +54,11 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     @Transactional
     public Optional<FullManagerDto> getManagerByName(String name) {
-        log.info("getManagerByName {}", name);
+        log.info("getManagerByName with name{}", name);
         try {
             return Optional.of(mapper.map(managerRepository.findManagerByName(name), FullManagerDto.class));
         } catch (IllegalArgumentException ex) {
-            log.info("Manager with name {} wasn't found! ", name);
+            log.info("Manager with the name {} wasn't found! ", name);
             throw new NoSuchElementException();
         }
     }
@@ -68,7 +68,7 @@ public class ManagerServiceImpl implements ManagerService {
     public Optional<FullManagerDto> getManagerById(String id) {
         log.info("getManagerById {}", id);
         try {
-            return Optional.of(mapper.map(managerRepository.findManagerById(id), FullManagerDto.class));
+            return Optional.of(mapper.map(managerRepository.findManagerById(Long.parseLong(id)), FullManagerDto.class));
         } catch (IllegalArgumentException ex) {
             log.info("Manager with id {} wasn't found! ", id);
             throw new NoSuchElementException();
@@ -80,7 +80,7 @@ public class ManagerServiceImpl implements ManagerService {
     public ManagerRequestDto updateManager(ManagerRequestDto managerRequestDto, String name) {
         log.info("updateManager by name {}", name);
         FullManagerDto fullManagerDto = getManagerByName(name).orElseThrow();
-        Optional<Manager> manager = managerRepository.findById(Integer.valueOf(fullManagerDto.getId()));
+        Optional<Manager> manager = managerRepository.findById(Long.valueOf(fullManagerDto.getId()));
 
         String newName = managerRequestDto.getName() == null ? name : managerRequestDto.getName();
         String role = (managerRequestDto.getRole() == null ? fullManagerDto.getRole() : managerRequestDto.getRole());
@@ -99,7 +99,7 @@ public class ManagerServiceImpl implements ManagerService {
         log.info("updateManagerName ", name);
 
         FullManagerDto fullManagerDto = getManagerById(id).orElseThrow();
-        Manager manager = managerRepository.findManagerById(id);
+        Manager manager = managerRepository.findManagerById(Long.parseLong(id));
         managerRepository.updateName(id, name);
         Manager updatedManager = managerRepository.save(manager);
         log.info("Manager is updated successfully");
