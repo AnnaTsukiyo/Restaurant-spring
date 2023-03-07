@@ -12,10 +12,16 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,17 +29,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Log4j2
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Resource
     private final ModelMapper mapper;
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public Optional<FullUserDto> createUser(UserCreateDto userCreateDto) {
         log.info("createUser with email {}", userCreateDto.getEmail());
+        userCreateDto.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
         userRepository.save(mapper.map(userCreateDto, User.class));
         log.info("User with an email {} created successfully",userCreateDto.getEmail());
         return getUserByEmail(userCreateDto.getEmail());
@@ -130,5 +138,20 @@ public class UserServiceImpl implements UserService {
     public boolean isStatusActive(String email) {
         log.info("Checking if user with such email {} is active", email);
         return Boolean.parseBoolean(String.valueOf(getUserByEmail(email).orElseThrow().getStatus().equals("ACTIVE")));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(username);
+        if (user == null) {
+            log.error("User not found");
+            throw new UsernameNotFoundException("User not found");
+        } else {
+            log.info("User with number {} found !!!", username);
+        }
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
 }
