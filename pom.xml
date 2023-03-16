@@ -120,10 +120,26 @@
             <version>1.9.11</version>
         </dependency>
         <dependency>
+<<<<<<< HEAD
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>4.0.0</version>
         </dependency>
+=======
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>4.0.0</version>
+    </dependency>
+>>>>>>> jwt
     </dependencies>
 
     <build>
