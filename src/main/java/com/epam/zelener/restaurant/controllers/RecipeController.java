@@ -115,7 +115,7 @@ public class RecipeController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Recipe is updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid title provided"),
             @ApiResponse(responseCode = "404", description = "Recipe is not found")})
-    @PatchMapping(value = "update/{title}")
+    @PatchMapping(value = "/update/{title}")
     public ResponseEntity<Object> updateRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto, @PathVariable String title) {
         log.info("Request to updateRecipe with a title :{}", title);
         try {

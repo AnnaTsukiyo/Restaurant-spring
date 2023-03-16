@@ -11,14 +11,14 @@ import org.springframework.stereotype.Repository;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     @Query(value = "select i from Ingredient i where i.id = :id")
-    Ingredient findIngredientById(@Param(value = "id") Long id);
+    Ingredient findIngredientById(@Param(value = "id") String id);
 
     @Modifying
     @Query(value = "update Ingredient i set i.isActive ='false' WHERE i.id = :id")
-    void deactivateIngredientById(@Param(value = "id") long id);
+    void deactivateIngredientById(@Param(value = "id") String id);
 
     @Modifying
     @Query("update Ingredient i set i.quantity = :quantity WHERE i.id = :id")
-    void updateQuantity(@Param(value = "id") long id, @Param(value = "quantity") String quantity);
+    void updateQuantity(@Param(value = "id") String id);
 
 }

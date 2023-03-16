@@ -13,11 +13,8 @@ import java.util.List;
 public class OrderRequestDto {
 
     private String orderId;
-
     private List<Dish> dishList;
-
     private String totalPrice;
-
     private String methodOfReceiving;
 
 }

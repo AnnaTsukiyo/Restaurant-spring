@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = ConfirmedPasswordValidator.class)
-@Target( { ElementType.TYPE })
+@Target( {ElementType.TYPE_USE, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WrongConfirmedPassword {
     String message() default "Wrong confirmed password entered";

@@ -14,15 +14,11 @@ import java.util.List;
 @ToString
 public class FullOrderDto {
 
-    @NotBlank
     private String orderId;
-    @NotBlank
     private String userId;
     @NotBlank
     private List<Dish> dishList;
-    @NotBlank
     private String totalPrice;
-    @NotBlank
     private String methodOfReceiving;
     @NotBlank
     private OrderStatus status;

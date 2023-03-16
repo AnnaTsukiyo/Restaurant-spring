@@ -42,8 +42,8 @@ class IngredientServiceImplTest {
     @BeforeEach
     void setUp() {
         ingredientService = new IngredientServiceImpl(mapper, ingredientRepository);
-        ingredient = new Ingredient(1L,List.of( new Food(1L, "Black Olives", "Pitted Greek black olives ",
-                true, Status.ACTIVE,LocalDate.of(2022, Month.OCTOBER, 1),
+        ingredient = new Ingredient(1L, List.of(new Food(1L, "Black Olives", "Pitted Greek black olives ",
+                true, Status.ACTIVE, LocalDate.of(2022, Month.OCTOBER, 1),
                 LocalDate.of(2023, Month.DECEMBER, 10),
                 LocalDateTime.now(), LocalDateTime.now())), true, 30, 30);
     }
@@ -52,23 +52,23 @@ class IngredientServiceImplTest {
     @Test
     void createIngredient_positiveTest() {
 
-        IngredientCreateDto ingredientCreateDto = new IngredientCreateDto("2", "10", "20", "ACTIVE");
+        IngredientCreateDto ingredientCreateDto = new IngredientCreateDto("2", "10", "20", "true");
         Ingredient ingredientNew = mapper.map(ingredientCreateDto, Ingredient.class);
         lenient().when(ingredientRepository.save(ingredientNew)).thenReturn(ingredientNew);
-        lenient().when(ingredientRepository.findIngredientById(Long.valueOf(ingredientCreateDto.getId()))).thenReturn(ingredientNew);
+        lenient().when(ingredientRepository.findIngredientById(ingredientCreateDto.getId())).thenReturn(ingredientNew);
 
         Optional<FullIngredientDto> createdIngredient = ingredientService.createIngredient(ingredientCreateDto);
-        assertThat(createdIngredient.orElseThrow().getId()).isEqualTo(String.valueOf(2L));
+        assertThat(createdIngredient.orElseThrow().getId()).isEqualTo("2");
 
     }
 
-    @DisplayName("JUNIT Test DishServiceImpl deactivateDish() --positive test case scenario")
+    @DisplayName("JUNIT Test IngredientServiceImpl deactivateIngredient() --positive test case scenario")
     @Test
     void deactivateIngredient_positiveTest() {
 
-        lenient().when(ingredientRepository.findById(Long.valueOf(Math.toIntExact(ingredient.getId())))).thenReturn(Optional.of(ingredient));
+        lenient().when(ingredientRepository.findById(ingredient.getId())).thenReturn(Optional.of(ingredient));
         lenient().when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
-        lenient().when(ingredientRepository.findIngredientById(Long.valueOf(String.valueOf(ingredient.getId())))).thenReturn(ingredient);
+        lenient().when(ingredientRepository.findIngredientById(String.valueOf(ingredient.getId()))).thenReturn(ingredient);
 
         FullIngredientDto ingredientDto = ingredientService.deactivateIngredient(String.valueOf(ingredient.getId()));
         assertThat(ingredientDto.getIsActive().equals("false"));
@@ -79,17 +79,17 @@ class IngredientServiceImplTest {
     @Test
     void getIngredientById_positiveTest() {
 
-        Ingredient ingredientNew = new Ingredient(3L,List.of( new Food(1L, "Philadelphia cream cheese", "Philadelphia cream cheese Original 200g",
-                true,Status.ACTIVE, LocalDate.of(2022, Month.OCTOBER, 15),
+        Ingredient ingredientNew = new Ingredient(3L, List.of(new Food(1L, "Philadelphia cream cheese", "Philadelphia cream cheese Original 200g",
+                true, Status.ACTIVE, LocalDate.of(2022, Month.OCTOBER, 15),
                 LocalDate.of(2023, Month.OCTOBER, 15),
                 LocalDateTime.now(), LocalDateTime.now())), true, 5, 1);
 
         FullIngredientDto dto = new FullIngredientDto();
         dto.setId("3");
         System.out.println(ingredientNew.getId());
-        lenient().when(ingredientRepository.findIngredientById(Long.valueOf("3"))).thenReturn(ingredientNew);
+        lenient().when(ingredientRepository.findIngredientById("3")).thenReturn(ingredientNew);
 
-        Assertions.assertEquals(3,ingredientNew.getId());
+        Assertions.assertEquals(3, ingredientNew.getId());
         System.out.println("Ingredient is found :" + ingredientService.getIngredientById("3"));
     }
 
@@ -104,7 +104,7 @@ class IngredientServiceImplTest {
     @DisplayName("JUNIT Test IngredientServiceImpl updateIngredient() method --positive test case scenario")
     @Test
     void updateIngredient_positiveTest() {
-        when(ingredientRepository.findIngredientById(Long.valueOf(String.valueOf(ingredient.getId())))).thenReturn(ingredient);
+        when(ingredientRepository.findIngredientById(String.valueOf(ingredient.getId()))).thenReturn(ingredient);
         when(ingredientRepository.findById(Long.valueOf(Math.toIntExact((ingredient.getId()))))).thenReturn(Optional.of(ingredient));
         when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
 
@@ -120,7 +120,7 @@ class IngredientServiceImplTest {
     @Test
     void updateIngredientQuantity_positiveTest() {
 
-        when(ingredientRepository.findIngredientById(Long.valueOf("1"))).thenReturn(ingredient);
+        when(ingredientRepository.findIngredientById("1")).thenReturn(ingredient);
         when(ingredientRepository.findById(Long.valueOf(Math.toIntExact((ingredient.getId()))))).thenReturn(Optional.of(ingredient));
         when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
 

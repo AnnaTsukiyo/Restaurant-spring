@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,6 +40,7 @@ public class User {
     private String password;
 
     @Column
+    @NotNull
     private String confirmedPassword;
 
     @Column

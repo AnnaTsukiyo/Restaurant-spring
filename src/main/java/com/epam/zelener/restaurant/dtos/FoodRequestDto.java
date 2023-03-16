@@ -10,9 +10,7 @@ import lombok.*;
 public class FoodRequestDto {
 
     private String title;
-
     private String description;
-
     private String isActive;
 
 }

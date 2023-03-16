@@ -106,7 +106,7 @@ class DishControllerTest {
         verify(dishService, times(1)).getDishByTitle("Sushi Dragon");
     }
 
-    @DisplayName("GET by category -- positive scenario")
+    @DisplayName("GET dish by category -- positive scenario")
     @Test
     void getByCategory_positiveTest() throws Exception {
         FullDishDto greenTea = new FullDishDto("2", "Green tea", "35", "true", "250", "DRINKS", "ACTIVE",
@@ -117,7 +117,7 @@ class DishControllerTest {
                         true, 1, 1)));
         FullDishDto coffeeBlack = new FullDishDto("3", "Coffee Black", "40", "true", "300", String.valueOf(DRINKS), "ACTIVE", List.of(
                 new Ingredient(2L, List.of(new Food(2L, "Coffee", "  Coffee Robusta 10",
-                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE, LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.DECEMBER, 10),
                         LocalDateTime.now(), LocalDateTime.now())), true, 20, 1)));
 
@@ -130,7 +130,7 @@ class DishControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].category", is("DRINKS")));
     }
 
-    @DisplayName("GET by category -- negative scenario")
+    @DisplayName("GET dish by category -- negative scenario")
     @Test
     void getByCategory_negativeTest() throws Exception {
         mockMvc.perform(get("/api/dish/get/by/DRINKS$/0"))
@@ -157,7 +157,7 @@ class DishControllerTest {
         verify(dishService, times(1)).getAllDish();
     }
 
-    @DisplayName("SORT by title -- positive scenario")
+    @DisplayName("SORT dishes by title -- positive scenario")
     @Test
     void sortByTitle_PositiveTest() throws Exception {
         FullDishDto mushroomSoup = new FullDishDto();
@@ -174,19 +174,19 @@ class DishControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].title", is("Mushroom Soup")));
     }
 
-    @DisplayName("SORT by price -- positive scenario")
+    @DisplayName("SORT dishes by price -- positive scenario")
     @Test
     void sortByPrice_positiveTest() throws Exception {
 
         FullDishDto greenTea = new FullDishDto("2", "Green tea", "35", "true", "250", "DRINKS", "ACTIVE",
                 List.of(new Ingredient(2L, List.of(new Food(2L, "Green tea", "Green tea Ahmad",
-                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE, LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.JANUARY, 25),
                         LocalDateTime.now(), LocalDateTime.now())),
                         true, 1, 1)));
         FullDishDto coffeeBlack = new FullDishDto("3", "Coffee Black", "40", "true", "300", String.valueOf(DRINKS), "ACTIVE", List.of(
                 new Ingredient(2L, List.of(new Food(2L, "Coffee", "  Coffee Robusta 10",
-                        true, Status.ACTIVE,LocalDate.of(2022, Month.DECEMBER, 1),
+                        true, Status.ACTIVE, LocalDate.of(2022, Month.DECEMBER, 1),
                         LocalDate.of(2023, Month.DECEMBER, 10),
                         LocalDateTime.now(), LocalDateTime.now())), true, 20, 1)));
 
@@ -201,7 +201,7 @@ class DishControllerTest {
 
     }
 
-    @DisplayName("SORT by price -- negative scenario")
+    @DisplayName("SORT dish by price -- negative scenario")
     @Test
     void sortBy_NegativeTest() throws Exception {
         mockMvc.perform(get("/api/dish/sort/by/price$/0"))
@@ -209,7 +209,7 @@ class DishControllerTest {
                 .andExpect(content().string("Incorrect sorting type (must be price or title)"));
     }
 
-    @DisplayName("DEACTIVATE dish-- positive scenario")
+    @DisplayName("DEACTIVATE dish -- positive scenario")
     @Test
     void deactivateDish_positiveTest() throws Exception {
 
@@ -246,7 +246,7 @@ class DishControllerTest {
                 .andExpect(content().string(createdDish.getTitle() + " -- A new dish with a title {} is created"));
     }
 
-    @DisplayName("CREATE user -- negative scenario")
+    @DisplayName("CREATE dish -- negative scenario")
     @Test
     void createDish_negativeTest() throws Exception {
 
@@ -259,8 +259,8 @@ class DishControllerTest {
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", hasItem("must not be blank")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", hasItems("{Dish with such title already exists}", "must not be blank")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fields", hasItem("category")));
 
         verify(dishService, times(0)).createDish(createdDish);

@@ -82,7 +82,7 @@ public class OrderController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The order status is updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid id is provided"),
             @ApiResponse(responseCode = "404", description = "Order is not found")})
-    @PatchMapping(value = "update/{id}")
+    @PatchMapping(value = "/update/{id}")
     public ResponseEntity<Object> updateOrder(@Valid @RequestBody OrderRequestDto orderDto, @PathVariable String id) {
         try {
              orderService.updateOrder(orderDto, id);

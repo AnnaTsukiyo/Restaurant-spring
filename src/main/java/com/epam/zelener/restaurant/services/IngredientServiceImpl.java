@@ -29,20 +29,20 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientRepository ingredientRepository;
 
     @Override
-    public Optional<FullIngredientDto> createIngredient(@Valid IngredientCreateDto ingredientRequestDto) {
+    public Optional<FullIngredientDto> createIngredient(@Valid IngredientCreateDto createDto) {
+        log.info("createIngredient with an Id  {}", createDto.getId());
+         ingredientRepository.save(mapper.map(createDto, Ingredient.class));
         log.info("New Ingredient is created ");
-        Ingredient ingredient = ingredientRepository.save(mapper.map(ingredientRequestDto, Ingredient.class));
-        return Optional.of(mapper.map(ingredient, FullIngredientDto.class));
+        return getIngredientById(createDto.getId());
     }
-
     @Override
     @Transactional
     public FullIngredientDto deactivateIngredient(String id) {
         log.info("deleteIngredient with id {}", id);
         FullIngredientDto requestDto = getIngredientById(id).orElseThrow();
         Optional<Ingredient> ingredient = ingredientRepository.findById(Long.valueOf((requestDto.getId())));
-        ingredientRepository.deactivateIngredientById(Long.parseLong(id));
-        ingredient.orElseThrow().setActive(true);
+        ingredientRepository.deactivateIngredientById(id);
+        ingredient.orElseThrow().setIsActive(false);
         Ingredient deactivatedIngredient = ingredientRepository.save(ingredient.orElseThrow());
         log.info("Ingredient {} is deactivated", ingredient);
         return mapper.map(deactivatedIngredient, FullIngredientDto.class);
@@ -54,7 +54,7 @@ public class IngredientServiceImpl implements IngredientService {
     public Optional<FullIngredientDto> getIngredientById(String id) {
         log.info("getIngredientById {}", id);
         try {
-            return Optional.of(mapper.map(ingredientRepository.findIngredientById(Long.valueOf(id)), FullIngredientDto.class));
+            return Optional.of(mapper.map(ingredientRepository.findIngredientById(id), FullIngredientDto.class));
         } catch (IllegalArgumentException ex) {
             log.info("Ingredient with id {} wasn't found! ", id);
             throw new NoSuchElementException();
@@ -88,7 +88,7 @@ public class IngredientServiceImpl implements IngredientService {
         getIngredientById(id).orElseThrow();
 
         Ingredient ingredient = ingredientRepository.getById(Long.valueOf(id));
-        ingredientRepository.updateQuantity(Long.parseLong(id), quantity);
+        ingredientRepository.updateQuantity(id);
 
         Ingredient updatedIngredient = ingredientRepository.save(ingredient);
         log.info("User is updated successfully");

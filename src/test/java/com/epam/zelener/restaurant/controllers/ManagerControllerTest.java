@@ -79,7 +79,7 @@ class ManagerControllerTest {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.writeValueAsString(fullManagerDto);
         lenient().when(managerService.getManagerById("1")).thenReturn(Optional.ofNullable(fullManagerDto));
-        mockMvc.perform(get("/api/manager/get/1")
+        mockMvc.perform(get("/api/manager/1")
                         .content(mapper.writeValueAsBytes(fullManagerDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -93,7 +93,7 @@ class ManagerControllerTest {
     @Test
     void getManagerById_negativeTest() throws Exception {
         lenient().when(managerService.getManagerById("1")).thenThrow(NoSuchElementException.class);
-        mockMvc.perform(get("/api/manager/get/1"))
+        mockMvc.perform(get("/api/manager/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("1 -- Manager with such id {} doesn't exist "));
         verify(managerService, times(1)).getManagerById("1");
@@ -165,11 +165,11 @@ class ManagerControllerTest {
         fullManagerDto.setRole("Scarletta");
         when(managerService.updateManager(updateManagerDto, "Scarlett")).thenReturn(updateManagerDto);
 
-        mockMvc.perform(patch("/api/manager/{name}", "Scarlett")
+        mockMvc.perform(patch("/api/manager/update/{name}", "Scarlett")
                         .content(toJson(updateManagerDto))
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Scarlett Manager with name {} is updated successfully"));
+                .andExpect(content().string("Scarlett Manager with the name {} is updated successfully"));
     }
 
     @DisplayName("DEACTIVATE user-- positive scenario")

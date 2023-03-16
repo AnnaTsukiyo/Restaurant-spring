@@ -9,10 +9,7 @@ import lombok.*;
 @ToString
 public class DishRequestDto {
 
-
     private String title;
-
     private String price;
-
     private String weight;
 }

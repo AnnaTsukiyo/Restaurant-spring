@@ -15,5 +15,6 @@ public class IngredientRequestDto {
 
     private String units;
 
+    private String isActive;
 
 }

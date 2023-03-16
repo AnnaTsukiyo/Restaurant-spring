@@ -10,8 +10,7 @@ import lombok.*;
 public class RecipeRequestDto {
 
     private String number;
-
     private String title;
-
     private String duration;
+
 }

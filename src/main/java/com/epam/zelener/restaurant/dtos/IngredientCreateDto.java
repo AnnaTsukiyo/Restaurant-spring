@@ -19,6 +19,6 @@ public class IngredientCreateDto {
     @NotNull
     private String units;
     @NotNull
-    private String status;
+    private String isActive;
 
 }

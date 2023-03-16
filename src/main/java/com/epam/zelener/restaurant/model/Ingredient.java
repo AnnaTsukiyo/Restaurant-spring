@@ -26,7 +26,7 @@ public class Ingredient {
     private List<Food> foodList;
 
     @Column(columnDefinition = "boolean default true")
-    private boolean isActive;
+    private Boolean isActive;
 
     @Column(nullable = false)
     private int quantity;

@@ -14,6 +14,6 @@ public class UserUpdateDto {
     private String fullName;
     @Email(message = "{wrong.email}")
     private String newEmail;
-
     private String password;
+
 }

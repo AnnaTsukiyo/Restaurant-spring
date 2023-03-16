@@ -67,7 +67,7 @@ class IngredientControllerTest {
     void init() {
         fullIngredientDto = new FullIngredientDto("1", List.of(new Food(1L, "Salmon", "Smoked salmon from Norway", true, Status.ACTIVE,
                 LocalDate.of(2022, Month.DECEMBER, 1),
-                LocalDate.of(2022, Month.DECEMBER, 10), LocalDateTime.now(), LocalDateTime.now())), "true", "20", "3", "ACTIVE");
+                LocalDate.of(2022, Month.DECEMBER, 10), LocalDateTime.now(), LocalDateTime.now())), "true", "3", "10");
     }
 
     @DisplayName("GET ingredient by id -- positive scenario")
@@ -83,8 +83,8 @@ class IngredientControllerTest {
                         .content(mapper.writeValueAsBytes(fullIngredientDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity", is("20")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.units", is("3")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity", is("3")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.units", is("10")))
                 .andDo(print());
     }
 
@@ -101,7 +101,7 @@ class IngredientControllerTest {
 
     @DisplayName("GET all ingredients -- positive scenario")
     @Test
-    void findAllFood_positiveTest() throws Exception {
+    void findAllIngredients_positiveTest() throws Exception {
         lenient().when(ingredientService.getAllIngredients()).thenReturn(List.of(fullIngredientDto));
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -111,9 +111,8 @@ class IngredientControllerTest {
                         .content(mapper.writeValueAsBytes(fullIngredientDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].quantity", is("20")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].units", is("3")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status", is("ACTIVE")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].quantity", is("3")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].units", is("10")));
 
         verify(ingredientService, times(1)).getAllIngredients();
     }
@@ -130,7 +129,7 @@ class IngredientControllerTest {
                         .content(toJson(createDto))
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(createDto.getId() + " -- A new ingredient with id {} is created"));
+                .andExpect(content().string(" -- A new ingredient is created"));
     }
 
     @DisplayName("CREATE ingredient -- negative scenario")

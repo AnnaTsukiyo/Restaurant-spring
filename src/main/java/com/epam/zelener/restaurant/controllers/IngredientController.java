@@ -42,7 +42,7 @@ public class IngredientController {
                                                    @Valid @RequestBody IngredientCreateDto ingredientRequestDto) {
         log.info("Request to create a new Ingredient :{}", ingredientRequestDto);
         Optional<FullIngredientDto> fullIngredientDto = ingredientService.createIngredient(ingredientRequestDto);
-        return new ResponseEntity<>(fullIngredientDto + " -- A new ingredient is created", HttpStatus.OK);
+        return new ResponseEntity<>( " -- A new ingredient is created", HttpStatus.OK);
     }
 
     @Operation(summary = "Delete ingredient from a database")
